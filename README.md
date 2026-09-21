@@ -23,6 +23,7 @@ Project work and laboratory experiences are shorter, self-contained pieces tied 
 
 - **Misure di Campi Meccanici con Immagini e Onde** — Ingegneria Meccanica (LM-33), Perugia · 6 CFU, 48 h · 2nd year, 2nd semester · taught in English
   Waves and optical systems, 2D/3D shape measurement, motion and deformation fields, thermography, scanning vibrometry, PIV and acoustic imaging.
+  Software and tools: [`materials/MCMIO`](materials/MCMIO)
 - **Quality Management** — Engineering Management (L-8), Perugia · 6 CFU, 54 h · 3rd year, 1st semester · taught in English
   Quality standards and ISO 9000, accreditation and certification, and measurement techniques for quality control in industrial production.
   Hands-on notebooks: [`materials/quality-management`](materials/quality-management)
