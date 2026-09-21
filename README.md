@@ -8,7 +8,7 @@ I'm Lorenzo Capponi, MSCA-ERA Researcher at the Faculty of Mechanical Engineerin
 
 ---
 
-## What I offer
+## What you can find here
 
 | | Programme | Typical length |
 |---|---|---|
