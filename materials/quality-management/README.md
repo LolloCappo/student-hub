@@ -69,6 +69,8 @@ Speakers are confirmed a few weeks ahead; this table is updated as each is fixed
 
 Slides are published here after each lecture.
 
+- **[Lecture 1 — Introduction and the European framework](lec01-introduction.pdf)** (21 & 24 September)
+
 - [`hands_on/`](.) — notebooks for the image processing session: image manipulation, FFT, filtering and compression
 
 Reference text: *Juran's Quality Control Handbook*, alongside your own notes and the slides.
