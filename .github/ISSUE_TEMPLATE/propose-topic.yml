@@ -1,0 +1,47 @@
+name: Propose your own topic
+description: You have an idea you'd like to work on. Tell me about it.
+title: "[Proposal] "
+labels: ["proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas from students are welcome — several of the best theses I've supervised started this way.
+        A rough idea is enough; it doesn't need to be a finished plan.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: What would you like to work on, and what draws you to it?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: level
+    attributes:
+      label: What are you looking for?
+      options:
+        - MSc thesis — Ingegneria Meccanica (LM-33)
+        - BSc thesis — Engineering Management (L-8)
+        - Project work within a course
+        - Laboratory experience
+        - Not sure yet
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Your background
+      description: Relevant courses, software you've used, any lab or programming experience. Short is fine.
+    validations:
+      required: true
+
+  - type: input
+    id: timing
+    attributes:
+      label: When would you start, and how long do you have?
+      placeholder: "e.g. from March, about 6 months"
+    validations:
+      required: false

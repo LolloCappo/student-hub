@@ -1,0 +1,91 @@
+name: Thesis / project topic
+description: "For my own use: publish a new supervised topic."
+title: "[Topic] "
+labels: ["available"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: In one paragraph
+      description: What the work is about, in language a student who hasn't taken the advanced course can follow.
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Why this problem matters, and what is already known.
+    validations:
+      required: true
+
+  - type: textarea
+    id: objectives
+    attributes:
+      label: What you would do
+      description: Concrete steps. Three to six bullets.
+      value: |
+        -
+        -
+        -
+    validations:
+      required: true
+
+  - type: dropdown
+    id: level
+    attributes:
+      label: Level
+      options:
+        - MSc thesis — Ingegneria Meccanica (LM-33)
+        - BSc thesis — Engineering Management (L-8)
+        - Project work — Misure di Campi Meccanici con Immagini e Onde
+        - Project work — Quality Management
+        - Laboratory experience
+    validations:
+      required: true
+
+  - type: dropdown
+    id: nature
+    attributes:
+      label: Nature of the work
+      options:
+        - Mostly experimental
+        - Mostly numerical / computational
+        - Mixed
+    validations:
+      required: true
+
+  - type: textarea
+    id: prerequisites
+    attributes:
+      label: Useful background
+      description: What helps. Be explicit that these are not hard requirements.
+      value: |
+        Helpful, but you can pick most of this up along the way:
+        -
+        -
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Equipment, data and code available
+    validations:
+      required: false
+
+  - type: textarea
+    id: reading
+    attributes:
+      label: Starting references
+      description: Two or three papers to read first.
+    validations:
+      required: false
+
+  - type: input
+    id: duration
+    attributes:
+      label: Indicative duration
+      placeholder: "e.g. 6 months"
+    validations:
+      required: false
