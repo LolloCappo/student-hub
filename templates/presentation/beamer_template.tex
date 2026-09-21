@@ -1,0 +1,289 @@
+% !TEX program = xelatex
+%
+% Beamer Template - University of Perugia Style
+% Compile with XeLaTeX
+%
+% Copyright (c) 2026 Lorenzo Capponi
+% License: MIT License
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in
+% all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+\documentclass[aspectratio=169]{beamer}
+
+%% ============================================================
+%% PACKAGES
+%% ============================================================
+\usepackage{fontspec}
+\usepackage{unicode-math}  % required for math fonts with XeLaTeX
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}       % align, gather, multline, etc.
+\usepackage{amssymb}       % \mathbb, \mathcal, extra symbols
+\usepackage{siunitx}       % consistent units: \SI{3e8}{\metre\per\second}, \num{1.23e-4}
+\sisetup{
+    per-mode        = symbol,       % m/s style (use fraction for m over s)
+    uncertainty-mode = separate,    % \SI{1.0 +- 0.1}{\metre}
+    range-phrase    = {--},         % 1--10 keV
+    detect-all,                     % inherit surrounding font (bold titles, etc.)
+}
+
+%% ============================================================
+%% FONTS
+%% Primary: Gulliver (place .ttf files alongside this .tex file)
+%% Fallback: comment out Gulliver blocks and uncomment the fallback lines
+%% ============================================================
+% Gulliver Regular is installed; Bold/Italic are synthesised since the separate
+% variant files (Gulliver Bold Regular, Gulliver Italic Regular) are not present.
+% Once you install those .ttf files, replace AutoFakeBold/AutoFakeSlant with:
+%   BoldFont = Gulliver Bold Regular,  ItalicFont = Gulliver Italic Regular
+\setmainfont{Gulliver}[
+    AutoFakeBold  = 1.5,
+    AutoFakeSlant = 0.2,
+]
+\setsansfont{Gulliver}[
+    AutoFakeBold  = 1.5,
+    AutoFakeSlant = 0.2,
+]
+% Latin Modern Math is always present in any TeX Live installation.
+\setmathfont{Latin Modern Math}
+
+%% ============================================================
+%% COLOR PALETTE
+%% Set RuleColorA and RuleColorB to match your logo.
+%% - One logo color  → use two tones of the same hue.
+%% - Multiple colors → use the two most prominent ones.
+%% ============================================================
+\definecolor{RuleColorA}{HTML}{E53031}   % top rule
+\definecolor{RuleColorB}{HTML}{2B4D9A}   % bottom rule
+\definecolor{DarkGrey}{HTML}{555555}
+
+%% ============================================================
+%% BEAMER THEME
+%% ============================================================
+\usetheme{default}
+\usecolortheme{default}
+
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{frametitle}{fg=black,bg=white}
+\setbeamercolor{subtitle}{fg=black}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg=black}
+\setbeamercolor{item}{fg=black}
+\setbeamercolor{subitem}{fg=black}
+\setbeamercolor{itemize item}{fg=black}
+\setbeamercolor{enumerate item}{fg=black}
+\setbeamercolor{block title}{fg=black,bg=white}
+\setbeamercolor{block body}{fg=black,bg=white}
+\setbeamercolor{footline}{fg=black}
+\setbeamercolor{headline}{fg=black}
+
+%% ============================================================
+%% FRAMETITLE
+%% ============================================================
+\setbeamertemplate{frametitle}{%
+    \vspace{0.05cm}%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=1.2cm,dp=0.3cm,leftskip=0.5cm,rightskip=0.5cm]{frametitle}
+        \usebeamerfont{frametitle}\insertframetitle\hfill\raisebox{-0.15cm}{\includegraphics[height=1cm]{logo.png}}
+        \ifx\insertframesubtitle\empty\else
+            \\[0.1cm]{\small\insertframesubtitle}
+        \fi
+    \end{beamercolorbox}%
+}
+
+%% ============================================================
+%% FOOTER  —  red line / white gap / blue line + author | date | n/N
+%% ============================================================
+\setbeamertemplate{footline}{%
+    \vskip-0.6cm%
+    \hbox{\hspace{1cm}\textcolor{RuleColorA} {\rule{\dimexpr\paperwidth-2cm\relax}{1.5pt}}}%
+    \vskip3pt%
+    \hbox{\hspace{1cm}\textcolor{RuleColorB}{\rule{\dimexpr\paperwidth-2cm\relax}{1.5pt}}}%
+    \vskip0.08cm%
+    \leavevmode%
+    \hbox{%
+        \begin{beamercolorbox}[wd=0.33\paperwidth,ht=0.3cm,dp=0.1cm,left,leftskip=1cm]{footline}
+            \usebeamerfont{footline}\insertshortauthor
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=0.34\paperwidth,ht=0.3cm,dp=0.1cm,center]{footline}
+            \usebeamerfont{footline}\insertshortdate
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=0.33\paperwidth,ht=0.3cm,dp=0.1cm,right,rightskip=1cm]{footline}
+            \usebeamerfont{footline}\insertframenumber{} / \inserttotalframenumber
+        \end{beamercolorbox}%
+    }%
+    \vskip2pt%
+}
+
+%% ============================================================
+%% TITLE PAGE
+%% Beamer's text area is narrower than \paperwidth by ~2x28.5pt.
+%% We cancel its left inset with a negative \hspace, then work in
+%% a \paperwidth-wide minipage so rules and content align correctly.
+%% Frame must be [t, plain, noframenumbering].
+%% ============================================================
+\setbeamertemplate{title page}{%
+    % Cancel Beamer's left margin (= (paperwidth - textwidth) / 2 = ~28.45pt)
+    % so our paperwidth-wide minipage starts at the true paper left edge.
+    \hspace*{-28.45pt}%
+    \begin{minipage}[t][\paperheight][t]{\paperwidth}%
+        \vspace{1.2cm}%
+        % ---- Title ----
+        \noindent\hspace{1cm}{\Large\textbf{\inserttitle}}\par%
+        \vspace{0.3cm}%
+        % ---- Subtitle ----
+        \noindent\hspace{1cm}{\large\insertsubtitle}\par%
+        \vspace{0.55cm}%
+        % ---- Red + Blue lines (1cm margin both sides) ----
+        \hbox{\hspace{1cm}\textcolor{RuleColorA}{\rule{\dimexpr\paperwidth-2cm\relax}{2pt}}}%
+        \nointerlineskip\vskip2pt%
+        \hbox{\hspace{1cm}\textcolor{RuleColorB}{\rule{\dimexpr\paperwidth-2cm\relax}{2pt}}}%
+        \vspace{0.4cm}%
+        % ---- Author (left) + logos (right) ----
+        \noindent\hspace{1cm}%
+        \begin{minipage}[c]{0.58\paperwidth}%
+            {\small\textcolor{DarkGrey}{\insertauthor}}\par%
+            \vspace{0.1cm}%
+            {\footnotesize\textcolor{DarkGrey}{\insertinstitute}}\par%
+            \vspace{0.1cm}%
+            {\footnotesize\textcolor{DarkGrey}{\insertdate}}%
+        \end{minipage}%
+        \begin{minipage}[c]{\dimexpr0.42\paperwidth-2cm\relax}%
+            \raggedleft
+            \includegraphics[height=1.8cm]{logo.png}%
+        \end{minipage}\par%
+    \end{minipage}%
+}
+
+%% ============================================================
+%% ITEMIZE / ENUMERATE
+%% ============================================================
+\setbeamertemplate{itemize item}     {\textcolor{black}{$\bullet$}}
+\setbeamertemplate{itemize subitem}  {\textcolor{black}{$\circ$}}
+\setbeamertemplate{itemize subsubitem}{\textcolor{black}{$-$}}
+\setbeamertemplate{enumerate item}   {\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertsubenumlabel.}
+
+%% ============================================================
+%% NAVIGATION SYMBOLS  —  off by default; uncomment to re-enable
+%% ============================================================
+\setbeamertemplate{navigation symbols}{}
+% To restore Beamer's built-in navigation buttons, comment the line above.
+
+%% ============================================================
+%% DOCUMENT INFORMATION
+%% ============================================================
+\title{Presentation Title}
+\subtitle{A Subtitle for Your Presentation}
+\author{Author Name}
+\institute{University of Perugia \\ Department of ...}
+\date{\today}
+
+%% ============================================================
+%% DOCUMENT
+%% ============================================================
+\begin{document}
+
+% Title slide — [t] top-aligns content; [plain] removes header/footer
+\begin{frame}[t, plain, noframenumbering]
+    \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+%% -----------------------------------------------------------
+\section{Introduction}
+%% -----------------------------------------------------------
+
+\begin{frame}{Introduction}
+    \begin{itemize}
+        \item First point about your topic
+        \item Second point with more details
+        \item Third point for completeness
+    \end{itemize}
+    \vspace{0.5cm}
+    This is a sample slide demonstrating the template.
+\end{frame}
+
+%% -----------------------------------------------------------
+\section{Main Content}
+%% -----------------------------------------------------------
+
+\begin{frame}{Main Content}
+    \framesubtitle{With a subtitle}
+    You can include:
+    \begin{enumerate}
+        \item Numbered lists
+        \item \textbf{Bold text} and \textit{italic text}
+        \item Mathematical expressions: $E = mc^2$
+    \end{enumerate}
+    \vspace{0.5cm}
+    \begin{block}{Block Title}
+        This is a highlighted block with important information.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Two Columns Example}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Left Column}
+            \begin{itemize}
+                \item Point one
+                \item Point two
+                \item Point three
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Right Column}
+            \begin{itemize}
+                \item Point A
+                \item Point B
+                \item Point C
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%% -----------------------------------------------------------
+\section{Conclusion}
+%% -----------------------------------------------------------
+
+\begin{frame}{Conclusion}
+    \begin{itemize}
+        \item Summary point one
+        \item Summary point two
+        \item Summary point three
+    \end{itemize}
+    \vspace{0.5cm}
+    \textbf{Thank you for your attention!}
+    \vspace{0.3cm}
+
+    Contact: \texttt{author@unipg.it}
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]
+    \vfill
+    \begin{center}
+        {\Large\textbf{Questions?}}\\[1cm]
+        {\large Author Name}\\[0.2cm]
+        \texttt{author@unipg.it}
+    \end{center}
+    \vfill
+\end{frame}
+
+\end{document}

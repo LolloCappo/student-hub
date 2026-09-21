@@ -1,0 +1,66 @@
+% !TeX spellcheck = en_US
+\documentclass[a4paper,12pt]{article}
+
+% Packages
+\usepackage[utf8]{inputenc} % UTF-8 encoding
+\usepackage{graphicx} % For including images
+\usepackage{amsmath, amssymb} % Math symbols and environments
+\usepackage{siunitx} % SI units formatting
+\usepackage{booktabs} % Better tables
+\usepackage{multirow} % Table multirow support
+\usepackage{hyperref} % Clickable links
+\usepackage{geometry} % Adjust margins
+\usepackage{fancyhdr} % Header and footer customization
+\usepackage{titlesec} % Section formatting
+\usepackage{lipsum} % Placeholder text (optional)
+
+% Page Layout
+\geometry{left=2.5cm, right=2.5cm, top=3cm, bottom=3cm}
+\setlength{\parindent}{0pt} % No paragraph indentation
+
+% Header & Footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Lab Report}
+\rhead{\today}
+\cfoot{\thepage}
+
+% Title Formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% Document Start
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    {\LARGE \textbf{Lab Report Title}}\\[1.5em]
+    {\large Author Name}\\[1em]
+    {\large Course Name}\\[1em]
+    {\large \today}\\[1em]
+    \vfill
+    \centering
+    \includegraphics[width=0.3\textwidth]{Figures/unipg.png}\\[2em] % Logo on title page
+    \vfill
+\end{titlepage}
+
+% Sections
+\section{Introduction}
+Describe the objectives and background of the experiment.
+
+\section{Materials and Methods}
+List the equipment used and explain the experimental procedure.
+
+\section{Results}
+Present your findings using tables and figures.
+
+\section{Discussion}
+Analyze the results and discuss their significance.
+
+\section{Conclusion}
+Summarize key findings and possible improvements.
+
+\section*{References}
+\bibliography{biblio}
+\end{document}

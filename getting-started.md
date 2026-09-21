@@ -48,7 +48,7 @@ pip install pyidi       # image-based displacement identification
 
 ## 5. Writing
 
-Use the [LaTeX templates](https://github.com/LolloCappo/Latex_template) from the start, not in the last month. [Overleaf](https://www.overleaf.com/) works if you'd rather not install a TeX distribution locally, and the templates drop straight into it.
+Use the [LaTeX templates](templates/) from the start, not in the last month. [Overleaf](https://www.overleaf.com/) works if you'd rather not install a TeX distribution locally, and the templates drop straight into it.
 
 Keep a `notes.md` in your repository from day one: what you tried, what the result was, what you decided. It costs two minutes a day and saves weeks at writing time.
 

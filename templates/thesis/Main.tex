@@ -1,0 +1,187 @@
+%---------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%---------------------------
+
+\documentclass[
+12pt, % The default document font size, options: 10pt, 11pt, 12pt
+oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+English,
+doublespacing,
+%singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
+%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+%nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
+%toctotoc, % Uncomment to add the main table of contents to the table of contents
+%parskip, % Uncomment to add space between paragraphs
+%nohyperref, % Uncomment to not load the hyperref package
+headsepline, % Uncomment to get a line under the header
+chapterinoneline, % Uncomment to place the chapter title next to the number on one line
+%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
+]{MastersDoctoralThesis} % The class file specifying the document structure
+\usepackage{amsmath,mathrsfs,amssymb}
+\usepackage{commath}
+\usepackage{physics}
+\usepackage{multirow}
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+%\usepackage{mathpazo} % Use the Palatino font by default
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{xfrac}
+\usepackage{icomma}
+\usepackage{mathtools}
+\usepackage[backend=biber,style=ieee]{biblatex}
+\bibliography{Biblio}
+\usepackage[autostyle=true]{csquotes}
+
+\DefineBibliographyStrings{english}{bibliography = {References}}
+
+%----------------------------------------------------------------------------------------
+%	MARGIN SETTINGS
+%----------------------------------------------------------------------------------------
+
+\geometry{
+	paper=a4paper, % Change to letterpaper for US letter
+	inner=2cm, % Inner margin
+	outer=2cm, % Outer margin
+	bindingoffset=.5cm, % Binding offset
+	top=2.5cm, % Top margin
+	bottom=2.5cm, % Bottom margin
+	%showframe, % Uncomment to show how the type block is set on the page
+}
+
+%----------------------------------------------------------------------------------------
+%	THESIS INFORMATION
+%----------------------------------------------------------------------------------------
+
+\thesistitle{TITOLO}
+\supervisor{Prof. Nome e Cognome Supervisor}
+\examiner{}
+\degree{Doctor of Philosophy / Master Degree}
+\author{Nome Cognome}
+\addresses{}
+
+\subject{Corso di Laurea}
+\university{Ateneo}
+\department{Dipartimento}
+\group{Gruppo di ricerca}
+
+\AtBeginDocument{
+\hypersetup{pdftitle=\ttitle}
+\hypersetup{pdfauthor=\authorname}
+\hypersetup{pdfkeywords=\keywordnames}
+\hypersetup{hidelinks}
+}
+
+\begin{document}
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\begin{titlepage}
+\begin{center}
+
+\includegraphics[width=30mm]{unipd}
+
+\vspace*{.01\textheight}
+{\scshape\LARGE \univname\par}\vspace{0.1cm}
+\textsc{\Large Doctoral Thesis}\\[0.1cm]
+
+\HRule \\[0.1cm]
+{\huge \bfseries \ttitle\par}\vspace{0.1cm}
+\HRule \\[0.1cm]
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Student:}\\
+{\authorname}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+\emph{Supervisor:} \\
+Prof. Nome e Cognome Supervisor}\\
+\emph{Doctoral course coordinator:}\\
+Prof. Nome e Cognome del coordinatore se tesi di dottorato
+\end{flushright}
+\end{minipage}\\[1cm]
+ 
+\vfill
+
+%\large \textit{A thesis submitted in fulfillment of the requirements\\ for the degree of \degreename}\\[0.3cm] % University requirement text
+%\textit{in the}\\[0.4cm]
+\groupname\\\deptname\\[0.5cm] % Research group name and department name
+\vfill
+{\large \today}\\[0.5cm] % Date
+\vfill
+\end{center}
+\end{titlepage}
+\clearpage
+%--------------------------
+%	QUOTATION PAGE
+%--------------------------
+
+\vspace*{0.2\textheight}
+\hfill{\enquote{\itshape CITAZIONE}}\bigbreak
+\hfill Nome autore \bigbreak
+\vspace*{0.15\textheight}
+%---------------------------
+%	DEDICATION
+%---------------------------
+\dedicatory{dedica} 
+%---------------------------
+%	ITALIANO
+%---------------------------
+\clearpage\null\newpage
+\doublespacing
+\include{Chapters/Prefazione}
+%---------------------------
+%	ABSTRACT PAGE
+%---------------------------
+\clearpage\null\newpage
+\begin{abstract}
+\addchaptertocentry{\abstractname}
+---
+\end{abstract}
+%----------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------
+\tableofcontents
+\listoffigures
+\listoftables
+%----------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------
+\mainmatter
+\pagestyle{thesis} 
+\include{Chapters/Introduction}
+\include{Chapters/Theoretical_background}
+\include{Chapters/Experimental_research}
+\include{Chapters/Results}
+\include{Chapters/Conclusions} 
+%-------------------------
+%	BIBLIOGRAPHY
+%-------------------------
+\singlespacing
+\printbibliography[heading=bibintoc]
+%-------------------------------
+%	THESIS CONTENT - APPENDICES
+%-------------------------------
+\doublespacing
+\appendix 
+\include{Appendices/AppendixA}
+\include{Appendices/AppendixB}
+%---------------------------
+%	ACKNOWLEDGEMENTS
+%---------------------------
+\clearpage\newpage
+\begin{acknowledgements}
+\addchaptertocentry{\acknowledgementname}
+---
+\end{acknowledgements}
+%---------------------------
+\end{document}  

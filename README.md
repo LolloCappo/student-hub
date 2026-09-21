@@ -1,6 +1,8 @@
-# Thesis topics, project work and lab experiences
+# Student hub
 
-This is my personal list of the topics **I supervise**, with the material you need to get started. It is not an official page of a laboratory, a department or a course — for those, see the [Department of Engineering](https://ing.unipg.it/) of the Università degli Studi di Perugia.
+Everything a student working with me needs: open topics, the templates to write in, course material, and what I'm currently funded to do.
+
+This is my personal page. It is not an official page of a laboratory, a department or a course — for those, see the [Department of Engineering](https://ing.unipg.it/) of the Università degli Studi di Perugia.
 
 I'm Lorenzo Capponi, MSCA-ERA Researcher at the Faculty of Mechanical Engineering, University of Ljubljana, working with the Mechanical and Thermal Measurements group at the Università degli Studi di Perugia. My work and code: [github.com/LolloCappo](https://github.com/LolloCappo)
 
@@ -23,8 +25,9 @@ Project work and laboratory experiences are shorter, self-contained pieces tied 
   Waves and optical systems, 2D/3D shape measurement, motion and deformation fields, thermography, scanning vibrometry, PIV and acoustic imaging.
 - **Quality Management** — Engineering Management (L-8), Perugia · 6 CFU, 54 h · 3rd year, 1st semester · taught in English
   Quality standards and ISO 9000, accreditation and certification, and measurement techniques for quality control in industrial production.
+  Hands-on notebooks: [`materials/quality-management`](materials/quality-management)
 
-If you're taking either course and want project work or a lab experience in it, see the [open topics](../../issues) below or just ask.
+If you're taking either course and want project work or a lab experience in it, see the open topics below or just ask.
 
 ## Open topics
 
@@ -42,11 +45,11 @@ By programme — [MSc Mechanical Engineering](../../issues?q=is%3Aissue+is%3Aope
 
 By course — [Images and Waves](../../issues?q=is%3Aissue+is%3Aopen+label%3Aimages-and-waves) · [Quality Management](../../issues?q=is%3Aissue+is%3Aopen+label%3Aquality-management)
 
-By area — [computer vision](../../issues?q=is%3Aissue+is%3Aopen+label%3Acomputer-vision) · [structural dynamics](../../issues?q=is%3Aissue+is%3Aopen+label%3Astructural-dynamics) · [sensors](../../issues?q=is%3Aissue+is%3Aopen+label%3Asensors) · [infrared](../../issues?q=is%3Aissue+is%3Aopen+label%3Ainfrared) · [quality control](../../issues?q=is%3Aissue+is%3Aopen+label%3Aquality-control)
+By area — [computer vision](../../issues?q=is%3Aissue+is%3Aopen+label%3Acomputer-vision) · [structural dynamics](../../issues?q=is%3Aissue+is%3Aopen+label%3Astructural-dynamics) · [optical methods](../../issues?q=is%3Aissue+is%3Aopen+label%3Aoptical-methods) · [sensors](../../issues?q=is%3Aissue+is%3Aopen+label%3Asensors) · [infrared](../../issues?q=is%3Aissue+is%3Aopen+label%3Ainfrared) · [fluid dynamics](../../issues?q=is%3Aissue+is%3Aopen+label%3Afluid-dynamics) · [quality control](../../issues?q=is%3Aissue+is%3Aopen+label%3Aquality-control)
 
 ### Interested in one?
 
-Comment on the issue: say what caught your attention and roughly what you've done before (courses, software, lab experience). 
+Comment on the issue: say what caught your attention and roughly what you've done before (courses, software, lab experience).
 
 Don't filter yourself out because you don't match every prerequisite — almost every topic can be adjusted to your background, and the listed skills are usually things you'll learn while doing the work.
 
@@ -55,6 +58,14 @@ Don't filter yourself out because you don't match every prerequisite — almost 
 Open a [topic proposal](../../issues/new?template=propose-topic.yml). If it's close to what I work on, there's a good chance we can shape it into a thesis or a project.
 
 ---
+
+## Templates
+
+Use these from the start, not in the last month. They drop straight into [Overleaf](https://www.overleaf.com/) if you'd rather not install a TeX distribution.
+
+- [`templates/thesis`](templates/thesis) — BSc and MSc thesis, with chapters and appendices already structured
+- [`templates/lab-report`](templates/lab-report) — lab and project reports
+- [`templates/presentation`](templates/presentation) — Beamer slides for your defence
 
 ## Before you start
 
@@ -74,11 +85,23 @@ See **[getting-started.md](getting-started.md)** for the Python environment, git
 - That you tell me when you're stuck. Being stuck is normal; staying stuck silently for three weeks is the one thing that actually costs you.
 - A written record as you go. Your thesis is much easier to write if the notes already exist.
 
-## Materials
+---
 
-- **[Latex_template](https://github.com/LolloCappo/Latex_template)** — LaTeX templates for the thesis, lab reports and presentations
-- **[HandsOn](https://github.com/LolloCappo/HandsOn)** — worked examples and hands-on training code
-- **[InfraPy](https://github.com/LolloCappo/InfraPy)**, **[pysfmov](https://github.com/LolloCappo/pysfmov)**, **[pyLMS](https://github.com/LolloCappo/pyLMS)**, **[pyNNST](https://github.com/LolloCappo/pyNNST)** — the libraries most of these projects build on
+## Research projects
+
+The work I supervise sits inside these.
+
+**[ARTEMIDE](https://ladisk.si/?flnm=artemide.php&lan=en&what=incfl)** — *Outdoor-space self-calibrating thermoelasticity-based fatigue damage identification*<br>
+MSCA-ERA Fellow · Horizon Europe, HORIZON-WIDERA-2023-TALENTS-02 · Grant 101180595 · Oct 2024 – Sep 2026<br>
+Full-field identification of fatigue damage on outdoor structures from infrared imaging, with self-calibration and motion compensation so the measurement holds up outside the lab. Hosted at LADISK, University of Ljubljana. &nbsp;·&nbsp; [CORDIS](https://cordis.europa.eu/project/id/101180595)
+
+**[PRIN2022-BTTMS](https://prinbtt.poliba.it/)** — *Development of calibration procedures of Tip Timing systems for non-contact turbine blade vibration measurements*<br>
+Research Fellow · MUR — PRIN 2022 · CUP J53D23002440006 · Nov 2023 – Jan 2025<br>
+Calibration methodology and metrological traceability for blade tip-timing systems, including a test bench based on kinematic inversion. Open data and results: [BTTMS](https://github.com/LolloCappo/BTTMS)
+
+**PRIN — Trabecular structures in AM** — *Experimental Techniques for the Characterization of the Effective Performances of Trabecular Morphology Structures Realized in AM*<br>
+Participant, Università degli Studi di Perugia unit · MIUR — Research Project of National Interest<br>
+Experimental characterization of the effective mechanical performance of trabecular-morphology structures produced by additive manufacturing.
 
 ## Contact
 
