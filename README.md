@@ -83,3 +83,5 @@ See **[getting-started.md](getting-started.md)** for the Python environment, git
 ## Contact
 
 Open an [issue](../../issues) here — comment on a topic that interests you, or open a blank one for anything else. That's the fastest way to reach me, and it's visible so other students benefit from the answer.
+
+If you would rather write privately: **lorenzo.capponi@fs.uni-lj.si**
