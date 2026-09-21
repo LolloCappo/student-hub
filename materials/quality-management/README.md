@@ -77,4 +77,4 @@ You will need Python for the hands-on session — see [getting-started.md](../..
 
 ## Exam
 
-Written test, followed by an oral examination that discusses and extends the written part.
+Oral examination.
