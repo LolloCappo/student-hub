@@ -64,7 +64,7 @@ Open a [topic proposal](../../issues/new?template=propose-topic.yml). If it's cl
 
 Use these from the start, not in the last month. They drop straight into [Overleaf](https://www.overleaf.com/) if you'd rather not install a TeX distribution.
 
-- [`templates/thesis`](templates/thesis) — BSc and MSc thesis, with chapters and appendices already structured
+- [`templates/thesis`](templates/thesis) — thesis template for BSc, MSc and PhD, with a [writing guide](templates/thesis/README.md) explaining what goes in each chapter
 - [`templates/lab-report`](templates/lab-report) — lab and project reports
 - [`templates/presentation`](templates/presentation) — Beamer slides for your defence
 

@@ -69,7 +69,13 @@ Speakers are confirmed a few weeks ahead; this table is updated as each is fixed
 
 Slides are published here after each lecture.
 
-- **[Lecture 1 — Introduction and the European framework](lec01-introduction.pdf)** (21 & 24 September)
+| | Lecture | Session |
+|---:|---|---|
+| 1 | [Introduction and the European framework](lec01-introduction.pdf) | Mon 21 Sep |
+| 2 | [Standards, quality, certification and liability](lec02-standards.pdf) | Thu 24 Sep |
+| 3 | [History and evolution of quality management](lec03-history.pdf) | Mon 28 Sep |
+| 4 | [What quality is, what it costs, how you organise for it](lec04-quality-and-costs.pdf) | Thu 1 Oct |
+| 5 | [ISO 9000 and ISO 9001](lec05-iso9000.pdf) | Mon 5 Oct |
 
 - [`hands_on/`](.) — notebooks for the image processing session: image manipulation, FFT, filtering and compression
 

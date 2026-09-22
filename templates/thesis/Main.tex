@@ -1,187 +1,226 @@
-%---------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%---------------------------
+%==============================================================================
+%  THESIS TEMPLATE
+%  Universita degli Studi di Perugia - Dipartimento di Ingegneria
+%
+%  The SAME file is used for a Bachelor's, Master's or Doctoral thesis.
+%  You only change the THESIS INFORMATION block below -- nothing else.
+%
+%  Compile with pdfLaTeX, then biber, then pdfLaTeX twice.
+%  On Overleaf: just press Recompile (it handles the sequence for you).
+%
+%  Read README.md before you start. It explains what belongs in each chapter.
+%==============================================================================
 
 \documentclass[
-12pt, % The default document font size, options: 10pt, 11pt, 12pt
-oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
-English,
-doublespacing,
-%singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
-%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
-%nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
-liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
-%toctotoc, % Uncomment to add the main table of contents to the table of contents
-%parskip, % Uncomment to add space between paragraphs
-%nohyperref, % Uncomment to not load the hyperref package
-headsepline, % Uncomment to get a line under the header
-chapterinoneline, % Uncomment to place the chapter title next to the number on one line
-%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
-]{MastersDoctoralThesis} % The class file specifying the document structure
-\usepackage{amsmath,mathrsfs,amssymb}
-\usepackage{commath}
-\usepackage{physics}
-\usepackage{multirow}
-\usepackage[utf8]{inputenc} % Required for inputting international characters
-\usepackage[T1]{fontenc} % Output font encoding for international characters
-%\usepackage{mathpazo} % Use the Palatino font by default
+12pt,            % Body font size: 10pt, 11pt or 12pt
+oneside,         % oneside = printed on one face. Use twoside for a bound copy.
+english,         % Language of the thesis body
+onehalfspacing,  % Alternatives: singlespacing, doublespacing
+%draft,          % Uncomment while writing: no images, marks overfull lines
+liststotoc,      % Put list of figures / tables into the table of contents
+headsepline,     % Rule under the running header
+chapterinoneline,% Chapter number and title on one line
+]{MastersDoctoralThesis}
+
+%------------------------------------------------------------------------------
+%  PACKAGES
+%------------------------------------------------------------------------------
+\usepackage[utf8]{inputenc}      % Accented characters in the source
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,mathrsfs,mathtools}
+\usepackage{physics}             % \dv, \pdv, \abs, \norm, ...
+\usepackage{siunitx}             % ALWAYS write units with this: \SI{9.81}{\metre\per\second\squared}
+\usepackage{graphicx}
 \usepackage{float}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{booktabs}            % Proper table rules: \toprule \midrule \bottomrule
 \usepackage{xcolor}
-\usepackage{listings}
+\usepackage{listings}            % Code listings
 \usepackage{caption}
 \usepackage{setspace}
-\usepackage{subcaption}
 \usepackage{xfrac}
-\usepackage{icomma}
-\usepackage{mathtools}
-\usepackage[backend=biber,style=ieee]{biblatex}
-\bibliography{Biblio}
+\usepackage{icomma}              % So "1,5" in maths is a decimal comma, not a list
 \usepackage[autostyle=true]{csquotes}
+\usepackage[backend=biber,style=ieee,sorting=none]{biblatex}
 
+\addbibresource{biblio.bib}      % Your bibliography database
 \DefineBibliographyStrings{english}{bibliography = {References}}
 
-%----------------------------------------------------------------------------------------
-%	MARGIN SETTINGS
-%----------------------------------------------------------------------------------------
-
-\geometry{
-	paper=a4paper, % Change to letterpaper for US letter
-	inner=2cm, % Inner margin
-	outer=2cm, % Outer margin
-	bindingoffset=.5cm, % Binding offset
-	top=2.5cm, % Top margin
-	bottom=2.5cm, % Bottom margin
-	%showframe, % Uncomment to show how the type block is set on the page
+\sisetup{
+  per-mode            = symbol,      % m/s rather than m s^-1
+  separate-uncertainty= true,        % \SI{1.23 +- 0.04}{\milli\metre}
+  range-phrase        = {--},
+  detect-all,
 }
 
-%----------------------------------------------------------------------------------------
-%	THESIS INFORMATION
-%----------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%  PAGE GEOMETRY
+%------------------------------------------------------------------------------
+\geometry{
+  paper=a4paper,
+  inner=2.5cm,          % Inner margin (wider: this is the bound edge)
+  outer=2.5cm,
+  bindingoffset=.5cm,
+  top=2.5cm,
+  bottom=2.5cm,
+  %showframe,           % Uncomment to see the type block
+}
 
-\thesistitle{TITOLO}
-\supervisor{Prof. Nome e Cognome Supervisor}
+%==============================================================================
+%  ############   THESIS INFORMATION -- EDIT ONLY THIS BLOCK   ############
+%==============================================================================
+
+% --- What kind of thesis is this? Uncomment exactly ONE line. -----------------
+%\newcommand{\thesistype}{Bachelor's Degree Thesis}
+\newcommand{\thesistype}{Master's Degree Thesis}
+%\newcommand{\thesistype}{Doctoral Thesis}
+
+% --- Title, author, degree ---------------------------------------------------
+\thesistitle{Title of the thesis, as it will appear on the cover}
+\author{Name Surname}
+\newcommand{\degreecourse}{Corso di Laurea Magistrale in Ingegneria Meccanica}
+\newcommand{\academicyear}{2026/2027}
+
+% --- Who supervises. Leave a field EMPTY {} if it does not apply. -------------
+\supervisor{Prof. Name Surname}
+\newcommand{\cosupervisorname}{Dr. Name Surname}   % {} if there is no co-supervisor
+\newcommand{\coordinatorname}{}                    % PhD only. {} for BSc and MSc.
+
+% --- Institution -------------------------------------------------------------
+\university{Universit\`a degli Studi di Perugia}
+\department{Dipartimento di Ingegneria}
+\group{Misure Meccaniche e Termiche}              % {} if not applicable
+
+% --- Cover logo --------------------------------------------------------------
+% Put the file at Figures/logo.pdf (or .png). If it is missing, a placeholder
+% box is drawn instead, so the document always compiles.
+\newcommand{\coverlogo}{Figures/logo}
+
+%==============================================================================
+%  ############   END OF THE BLOCK YOU EDIT   ############
+%==============================================================================
+
+% Helper: print #2 only if the macro #1 has a non-empty value.
+% (Must test the macro's CONTENTS, not its name -- hence etoolbox.)
+\usepackage{etoolbox}
+\newcommand{\ifnotempty}[2]{\ifdefempty{#1}{}{#2}}
+
+% --- Fields the document class requires internally. Leave these alone. --------
+% (The class errors out if any of them is undefined.)
+\degree{\thesistype}
+\faculty{}
 \examiner{}
-\degree{Doctor of Philosophy / Master Degree}
-\author{Nome Cognome}
 \addresses{}
-
-\subject{Corso di Laurea}
-\university{Ateneo}
-\department{Dipartimento}
-\group{Gruppo di ricerca}
+\subject{\degreecourse}
+\keywords{}
 
 \AtBeginDocument{
-\hypersetup{pdftitle=\ttitle}
-\hypersetup{pdfauthor=\authorname}
-\hypersetup{pdfkeywords=\keywordnames}
-\hypersetup{hidelinks}
+  \hypersetup{pdftitle=\ttitle}
+  \hypersetup{pdfauthor=\authorname}
+  \hypersetup{hidelinks}
 }
 
 \begin{document}
-\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
-\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
-%----------------------------------------------------------------------------------------
-%	TITLE PAGE
-%----------------------------------------------------------------------------------------
+\frontmatter
+\pagestyle{plain}
+
+%------------------------------------------------------------------------------
+%  TITLE PAGE
+%------------------------------------------------------------------------------
 \begin{titlepage}
 \begin{center}
 
-\includegraphics[width=30mm]{unipd}
+% Logo, or a placeholder of the same size if the file is not there yet
+\IfFileExists{\coverlogo.pdf}
+  {\includegraphics[width=38mm]{\coverlogo}}
+  {\IfFileExists{\coverlogo.png}
+    {\includegraphics[width=38mm]{\coverlogo}}
+    {\framebox[38mm][c]{\parbox[c][36mm][c]{32mm}{\centering\small\itshape logo}}}}
 
-\vspace*{.01\textheight}
-{\scshape\LARGE \univname\par}\vspace{0.1cm}
-\textsc{\Large Doctoral Thesis}\\[0.1cm]
+\vspace{0.6cm}
 
-\HRule \\[0.1cm]
-{\huge \bfseries \ttitle\par}\vspace{0.1cm}
-\HRule \\[0.1cm]
-\begin{minipage}[t]{0.4\textwidth}
-\begin{flushleft} \large
-\emph{Student:}\\
-{\authorname}
-\end{flushleft}
+{\scshape\LARGE \univname\par}\vspace{0.15cm}
+{\large \deptname\par}\vspace{0.15cm}
+{\normalsize \degreecourse\par}
+
+\vspace{1.2cm}
+\textsc{\Large \thesistype}\\[0.4cm]
+
+\HRule\\[0.4cm]
+{\huge\bfseries \ttitle\par}\vspace{0.3cm}
+\HRule\\[1.0cm]
+
+\begin{minipage}[t]{0.45\textwidth}
+  \begin{flushleft}\large
+    \emph{Candidate:}\\
+    {\authorname}
+  \end{flushleft}
 \end{minipage}
-\begin{minipage}[t]{0.4\textwidth}
-\begin{flushright} \large
-\emph{Supervisor:} \\
-Prof. Nome e Cognome Supervisor}\\
-\emph{Doctoral course coordinator:}\\
-Prof. Nome e Cognome del coordinatore se tesi di dottorato
-\end{flushright}
-\end{minipage}\\[1cm]
- 
-\vfill
+\begin{minipage}[t]{0.45\textwidth}
+  \begin{flushright}\large
+    \emph{Supervisor:}\\
+    \supname
+    \ifnotempty{\cosupervisorname}{\\[0.3cm]\emph{Co-supervisor:}\\ \cosupervisorname}
+    \ifnotempty{\coordinatorname}{\\[0.3cm]\emph{Coordinator:}\\ \coordinatorname}
+  \end{flushright}
+\end{minipage}
 
-%\large \textit{A thesis submitted in fulfillment of the requirements\\ for the degree of \degreename}\\[0.3cm] % University requirement text
-%\textit{in the}\\[0.4cm]
-\groupname\\\deptname\\[0.5cm] % Research group name and department name
-\vfill
-{\large \today}\\[0.5cm] % Date
-\vfill
+\par\vspace*{\fill}
+
+\ifnotempty{\groupname}{{\normalsize \groupname\par}\vspace{0.4cm}}
+{\large Academic Year \academicyear\par}
+\vspace{1.0cm}
+
 \end{center}
 \end{titlepage}
 \clearpage
-%--------------------------
-%	QUOTATION PAGE
-%--------------------------
 
-\vspace*{0.2\textheight}
-\hfill{\enquote{\itshape CITAZIONE}}\bigbreak
-\hfill Nome autore \bigbreak
-\vspace*{0.15\textheight}
-%---------------------------
-%	DEDICATION
-%---------------------------
-\dedicatory{dedica} 
-%---------------------------
-%	ITALIANO
-%---------------------------
-\clearpage\null\newpage
-\doublespacing
-\include{Chapters/Prefazione}
-%---------------------------
-%	ABSTRACT PAGE
-%---------------------------
-\clearpage\null\newpage
-\begin{abstract}
-\addchaptertocentry{\abstractname}
----
-\end{abstract}
-%----------------------------
-%	LIST OF CONTENTS/FIGURES/TABLES PAGES
-%----------------------------
+%------------------------------------------------------------------------------
+%  ABSTRACT  (unnumbered)
+%  If the thesis is written in English, the Italian "Sommario" is expected too.
+%  It is effectively mandatory for a thesis carried out during Erasmus mobility.
+%------------------------------------------------------------------------------
+\include{Chapters/0a_Abstract}
+\include{Chapters/0b_Sommario}
+
+%------------------------------------------------------------------------------
+%  CONTENTS
+%------------------------------------------------------------------------------
 \tableofcontents
 \listoffigures
 \listoftables
-%----------------------------
-%	THESIS CONTENT - CHAPTERS
-%----------------------------
+
+%------------------------------------------------------------------------------
+%  BODY
+%------------------------------------------------------------------------------
 \mainmatter
-\pagestyle{thesis} 
-\include{Chapters/Introduction}
-\include{Chapters/Theoretical_background}
-\include{Chapters/Experimental_research}
-\include{Chapters/Results}
-\include{Chapters/Conclusions} 
-%-------------------------
-%	BIBLIOGRAPHY
-%-------------------------
+\pagestyle{thesis}
+
+\include{Chapters/1_Introduction}
+\include{Chapters/2_Theoretical_background}
+\include{Chapters/3_Methodology}          % Delete this line if you have no methodological contribution
+\include{Chapters/4_Experimental_campaign}
+\include{Chapters/5_Results_and_discussion}
+\include{Chapters/6_Conclusions}
+
+%------------------------------------------------------------------------------
+%  REFERENCES
+%------------------------------------------------------------------------------
 \singlespacing
 \printbibliography[heading=bibintoc]
-%-------------------------------
-%	THESIS CONTENT - APPENDICES
-%-------------------------------
-\doublespacing
-\appendix 
+\onehalfspacing
+
+%------------------------------------------------------------------------------
+%  APPENDICES  (optional -- delete if you have none)
+%------------------------------------------------------------------------------
+\appendix
 \include{Appendices/AppendixA}
-\include{Appendices/AppendixB}
-%---------------------------
-%	ACKNOWLEDGEMENTS
-%---------------------------
-\clearpage\newpage
-\begin{acknowledgements}
-\addchaptertocentry{\acknowledgementname}
----
-\end{acknowledgements}
-%---------------------------
-\end{document}  
+%\include{Appendices/AppendixB}
+
+%------------------------------------------------------------------------------
+%  ACKNOWLEDGEMENTS  (last, and not numbered)
+%------------------------------------------------------------------------------
+\include{Chapters/7_Acknowledgements}
+
+\end{document}
