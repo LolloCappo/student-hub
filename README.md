@@ -32,21 +32,16 @@ If you're taking either course and want project work or a lab experience in it, 
 
 ## Open topics
 
-Every topic is an **[issue](../../issues)** in this repository.
+Every topic is an **[issue](../../issues)** in this repository, and carries exactly one of two labels:
 
 | | |
 |---|---|
-| [🟢 available](../../issues?q=is%3Aissue+is%3Aopen+label%3Aavailable) | free to take right now |
-| [🔵 taken](../../issues?q=is%3Aissue+is%3Aopen+label%3Ataken) | currently assigned, for reference |
-| [✅ completed](../../issues?q=is%3Aissue+is%3Aclosed) | finished theses and projects |
+| [🟢 **available**](../../issues?q=is%3Aissue+is%3Aopen+label%3Aavailable) | free to take right now |
+| [🔴 **taken**](../../issues?q=is%3Aissue+is%3Aopen+label%3Ataken) | currently assigned — listed so you can see the kind of work going on |
 
-By activity — [thesis](../../issues?q=is%3Aissue+is%3Aopen+label%3Athesis) · [project work](../../issues?q=is%3Aissue+is%3Aopen+label%3Aproject-work) · [lab experience](../../issues?q=is%3Aissue+is%3Aopen+label%3Alab-experience)
+Finished work is [closed](../../issues?q=is%3Aissue+is%3Aclosed), so the open list is always what is actually going on.
 
-By programme — [MSc Mechanical Engineering](../../issues?q=is%3Aissue+is%3Aopen+label%3Amsc-mechanical) · [BSc Engineering Management](../../issues?q=is%3Aissue+is%3Aopen+label%3Absc-management)
-
-By course — [Images and Waves](../../issues?q=is%3Aissue+is%3Aopen+label%3Aimages-and-waves) · [Quality Management](../../issues?q=is%3Aissue+is%3Aopen+label%3Aquality-management)
-
-By area — [computer vision](../../issues?q=is%3Aissue+is%3Aopen+label%3Acomputer-vision) · [structural dynamics](../../issues?q=is%3Aissue+is%3Aopen+label%3Astructural-dynamics) · [optical methods](../../issues?q=is%3Aissue+is%3Aopen+label%3Aoptical-methods) · [sensors](../../issues?q=is%3Aissue+is%3Aopen+label%3Asensors) · [infrared](../../issues?q=is%3Aissue+is%3Aopen+label%3Ainfrared) · [fluid dynamics](../../issues?q=is%3Aissue+is%3Aopen+label%3Afluid-dynamics) · [quality control](../../issues?q=is%3Aissue+is%3Aopen+label%3Aquality-control)
+Everything else — level, programme, area, whether it is a thesis or a shorter project — is written at the top of each issue. Use the [search box](../../issues) if you want to narrow it down: searching `thermography` or `Engineering Management` will find what tags used to.
 
 ### Interested in one?
 

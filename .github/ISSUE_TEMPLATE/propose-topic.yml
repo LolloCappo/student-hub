@@ -1,7 +1,6 @@
 name: Propose your own topic
 description: You have an idea you'd like to work on. Tell me about it.
 title: "[Proposal] "
-labels: ["proposal"]
 body:
   - type: markdown
     attributes:
