@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hands-on lab — Quality Management</title>
+<meta name="description" content="Can a phone camera inspect a batch of washers? Three hands-on exercises for the Quality Management course, University of Perugia.">
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="rules"></div>
+  <div class="top-in">
+    <nav class="nav" aria-label="Lab exercises">
+      <a class="home" href="index.html" aria-current="page">Hands-on lab</a>
+      <a href="camera.html">1 · Inside your camera</a>
+      <a href="gauge.html">2 · Build a camera gauge</a>
+      <a href="batch.html">3 · Accept or reject the batch</a>
+    </nav>
+    <div class="crumbs"><b>Quality Management</b> · BSc in Engineering Management · one session, 3 hours</div>
+    <h1>Can a phone camera inspect a batch of washers?</h1>
+    <p class="lead">On production lines, cameras check parts that no person could check one by one. In this session you build such a check yourself: you turn your phone into a measuring instrument, find out how good it really is, and use it to decide whether a real batch of washers is acceptable. No installation and no programming — everything runs in your browser, and your photos never leave your device.</p>
+  </div>
+</header>
+
+<main>
+  <div class="ex-grid">
+    <article class="card ex">
+      <div class="num">Exercise 1 · 25 min</div>
+      <h2>Inside your camera</h2>
+      <p class="q">What does a camera actually record?</p>
+      <ul>
+        <li>a photo as a grid of numbers, and what JPEG compression removes</li>
+        <li>colour channels and the Bayer filter</li>
+        <li>grey levels, resolution and aliasing</li>
+        <li>noise, and why averaging pixels beats it</li>
+      </ul>
+      <div class="go">
+        <a class="btn" href="camera.html">Open exercise 1</a>
+        <a class="btn ghost" href="https://colab.research.google.com/github/LolloCappo/student-hub/blob/main/materials/quality-management/lab/notebooks/1-inside-your-camera.ipynb" target="_blank" rel="noopener">Python on Colab</a>
+      </div>
+    </article>
+    <article class="card ex">
+      <div class="num">Exercise 2 · 45 min</div>
+      <h2>Build a camera gauge</h2>
+      <p class="q">Can a photo give you millimetres?</p>
+      <ul>
+        <li>from grey levels to parts: the threshold and the edge</li>
+        <li>calibration on a master washer measured with the caliper</li>
+        <li>what lighting, tilt and threshold do to the result</li>
+        <li>repeatability: several photos of the same washers</li>
+      </ul>
+      <div class="go">
+        <a class="btn" href="gauge.html">Open exercise 2</a>
+        <a class="btn ghost" href="https://colab.research.google.com/github/LolloCappo/student-hub/blob/main/materials/quality-management/lab/notebooks/2-camera-gauge.ipynb" target="_blank" rel="noopener">Python on Colab</a>
+      </div>
+    </article>
+    <article class="card ex">
+      <div class="num">Exercise 3 · 45 min</div>
+      <h2>Accept or reject the batch</h2>
+      <p class="q">Is the batch good — and how sure can you be?</p>
+      <ul>
+        <li>measurement uncertainty of your gauge</li>
+        <li>is the gauge good enough for the tolerance?</li>
+        <li>process performance P<sub>p</sub>, P<sub>pk</sub> of the batch</li>
+        <li>proving conformity with ISO 14253-1</li>
+      </ul>
+      <div class="go">
+        <a class="btn" href="batch.html">Open exercise 3</a>
+        <a class="btn ghost" href="https://colab.research.google.com/github/LolloCappo/student-hub/blob/main/materials/quality-management/lab/notebooks/3-accept-or-reject.ipynb" target="_blank" rel="noopener">Python on Colab</a>
+      </div>
+    </article>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h2>The session</h2>
+      <ul class="timeline">
+        <li><span class="t">0:00</span><span>The question, the batch and the groups. Each group measures its master washer with the caliper.</span></li>
+        <li><span class="t">0:15</span><span><b>Exercise 1</b> — inside your camera</span></li>
+        <li><span class="t">0:40</span><span><b>Exercise 2</b> — build a camera gauge; at least three photos of the same washers</span></li>
+        <li><span class="t">1:25</span><span>Break. Every group sends its CSV file; the class data are merged.</span></li>
+        <li><span class="t">1:40</span><span><b>Exercise 3</b> — accept or reject the batch, on the whole class's data</span></li>
+        <li><span class="t">2:25</span><span>Each group gives its verdict and defends it. Why do groups disagree?</span></li>
+      </ul>
+      <p class="hint">Each exercise ends with a few questions. Answer them as a group: they are what we discuss at the end.</p>
+    </div>
+    <div class="card">
+      <h2>What to bring</h2>
+      <ul class="kit">
+        <li><b>Your phone</b>, charged. Two per group: one is the camera, the other the light.</li>
+        <li><b>A laptop</b> per group if you can. A phone alone works too, just on a small screen.</li>
+        <li>Before the session, open this page on both and press <i>Try the example</i> in exercise 2.</li>
+      </ul>
+      <h3>On the desk for each group</h3>
+      <ul class="kit">
+        <li>about 15 numbered washers from the batch, and one marked master washer</li>
+        <li>white paper, a ruler, and the caliper at the instructor's desk</li>
+      </ul>
+      <p class="hint">iPhone photos will not open on a laptop? <i>Settings → Camera → Formats → Most Compatible</i>, or open the exercise on the phone and take the photo from there.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>The standards you will meet</h2>
+    <div class="two" style="gap:4px 24px">
+      <ul class="kit std">
+        <li><b>ISO 7089</b> — plain washers, normal series, product grade A: the parts and their tolerances</li>
+        <li><b>ISO 13385-1</b> — callipers: the reference instrument</li>
+        <li><b>ISO 5725-2</b> — repeatability and reproducibility of a measurement method</li>
+        <li><b>JCGM 100 (GUM)</b> — how to express measurement uncertainty</li>
+        <li><b>ISO 14253-1</b> — decision rules for proving conformity or nonconformity</li>
+      </ul>
+      <ul class="kit std">
+        <li><b>ISO 22514-2</b> — process capability and performance</li>
+        <li><b>ISO 3951-1</b> — lot acceptance by sampling, by variables</li>
+        <li><b>ISO 12233</b>, <b>ISO 15739</b> — resolution and noise of digital cameras</li>
+        <li><b>EMVA 1288</b> — characterisation of machine-vision cameras (industry standard)</li>
+        <li><b>ISO/IEC 10918-1</b> — JPEG compression</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card std">
+    <b>For the curious.</b> Every exercise has an <i>Under the hood</i> section and a Python notebook that does the same thing step by step. The notebooks run on Google Colab in the browser — a free Google account is needed, nothing to install. They are optional: everything in the session can be done on these pages.
+    <br><br>
+    <b>Course page:</b> <a href="https://github.com/LolloCappo/student-hub/tree/main/materials/quality-management">Quality Management on student-hub</a>
+  </div>
+</main>
+
+<footer>Quality Management · BSc in Engineering Management · Università degli Studi di Perugia · Prof. G. Rossi, dr. L. Capponi</footer>
+</body>
+</html>

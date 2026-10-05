@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera gauge — Quality Management lab</title>
+<meta name="description" content="Turn a phone photo into millimetres, and find out how good your camera gauge really is.">
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="rules"></div>
+  <div class="top-in">
+    <nav class="nav" aria-label="Lab exercises">
+      <a class="home" href="index.html">Hands-on lab</a>
+      <a href="camera.html">1 · Inside your camera</a>
+      <a href="gauge.html" aria-current="page">2 · Build a camera gauge</a>
+      <a href="batch.html">3 · Accept or reject the batch</a>
+    </nav>
+    <div class="crumbs"><b>Quality Management</b> · Exercise 2 of 3 · about 45 minutes</div>
+    <h1>Build a camera gauge</h1>
+    <p class="lead">Can a phone camera measure a washer well enough to accept or reject it? Here you turn a photo into millimetres, and find out where the errors come from. Everything runs in your browser: your photos never leave this device.</p>
+  </div>
+</header>
+
+<main>
+  <details>
+    <summary>Before you start — kit and how to take the photo</summary>
+    <div class="in two">
+      <div>
+        <h3>Your group's kit</h3>
+        <ul class="kit">
+          <li>10–15 washers from the batch, and one <b>master washer</b> marked with a pen</li>
+          <li>two phones (one is the light, one is the camera), a sheet of plain paper</li>
+          <li>the caliper (ISO 13385-1), at the instructor's desk — measure your master's outer and inner diameter there</li>
+        </ul>
+        <h3>Backlight: the best light for a silhouette</h3>
+        <p class="hint" style="margin-top:0">Open this page on the second phone or a tablet, press <b>Lightbox</b>, lay it flat, cover it with the paper and put the washers on the paper. The paper protects the screen and spreads the light evenly.</p>
+        <button class="ghost" id="btnLight" type="button">Lightbox</button>
+      </div>
+      <div>
+        <h3>Taking the photo</h3>
+        <ul class="kit">
+          <li>Hold the camera <b>parallel</b> to the table. Rest it on two cups or a stack of books so it does not move between photos.</li>
+          <li>Use <b>2× zoom</b> and step back: a longer focal length reduces perspective distortion.</li>
+          <li>Washers must not touch each other or the edge of the photo. The master can be anywhere.</li>
+          <li>Tap the screen to focus on the washers; avoid flash.</li>
+        </ul>
+        <p class="hint">iPhone photo will not load on a laptop? Set <i>Settings → Camera → Formats → Most Compatible</i>, or open this page on the phone and take the photo from here.</p>
+      </div>
+    </div>
+  </details>
+
+  <div class="grid">
+    <!-- ======== viewer ======== -->
+    <section class="viewer">
+      <div class="card">
+        <div class="stage" id="stage">
+          <div class="empty" id="empty">Load a photo (step 1) or try the example.</div>
+          <canvas id="view" hidden></canvas>
+        </div>
+        <div class="toolbar">
+          <label class="inline"><input type="checkbox" id="chkMask" checked> show what counts as part</label>
+          <label class="inline"><input type="checkbox" id="chkOutline" checked> show measured circles</label>
+          <span id="viewInfo"></span>
+        </div>
+        <div class="detail" id="detail" hidden>
+          <canvas id="zoom" class="zoombox" width="220" height="220"></canvas>
+          <div>
+            <p><b id="detTitle">Part</b></p>
+            <p id="detText"></p>
+            <p class="hint" style="margin:0">Click another part in the photo, or a row in the table, to inspect it.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== steps ======== -->
+    <section>
+      <div class="card">
+        <h2><span class="step-n">1</span>Load your photo</h2>
+        <p class="hint">On a phone, this can open the camera directly.</p>
+        <div class="row">
+          <label class="btn" for="file">Choose photo</label>
+          <input type="file" id="file" accept="image/*" hidden>
+          <button class="ghost" id="btnDemo" type="button">Try the example</button>
+        </div>
+        <div class="status" id="loadStatus"></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-n">2</span>Find the parts</h2>
+        <p class="hint">Every pixel darker than the threshold counts as part, everything brighter as background. The suggested value sits in the valley between the two peaks (Otsu's method).</p>
+        <div class="chart" id="hist">
+          <svg id="histSvg" viewBox="0 0 520 120" role="img" aria-label="Histogram of grey levels with the threshold"></svg>
+          <div class="tip" id="histTip"></div>
+        </div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--blue)"></span>counted as part</span>
+          <span><span class="sw" style="background:#b9c0cc"></span>background</span>
+          <span>bar height ∝ √(pixel count), so both peaks are visible</span>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <span>Threshold <span class="value" id="thrVal">–</span></span>
+          <button class="ghost" id="btnAuto" type="button" disabled>Back to suggested</button>
+          <label class="inline"><input type="checkbox" id="chkLight"> parts are lighter than the background</label>
+        </div>
+        <input type="range" id="thr" min="1" max="254" value="128" disabled aria-label="Threshold">
+        <div class="status" id="segStatus"></div>
+        <div class="why"><b>Why it matters.</b> The edge of a washer in the photo is not a line: it is a ramp of grey pixels a few pixels wide. The threshold decides where in that ramp the edge is — and so the diameter you measure. Move it and watch the numbers in step 4.</div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-n">3</span>Calibrate: from pixels to millimetres</h2>
+        <div class="seg" role="group" aria-label="Calibration method">
+          <button type="button" id="calMaster" aria-pressed="true">Master washer</button>
+          <button type="button" id="calRuler" aria-pressed="false">Ruler in the photo</button>
+        </div>
+        <div id="panelMaster">
+          <p class="hint">Measure your master's outer diameter with the caliper. Click the master in the photo, then type the caliper reading.</p>
+          <div class="row">
+            <button class="ghost" id="btnSetMaster" type="button" disabled>Use selected part as master</button>
+            <label class="inline">caliper outer Ø <input type="number" id="masterMM" step="0.01" min="0" placeholder="mm"> mm</label>
+            <label class="inline">inner Ø <input type="number" id="masterIDmm" step="0.01" min="0" placeholder="optional"> mm</label>
+          </div>
+        </div>
+        <div id="panelRuler" hidden>
+          <p class="hint">Put a ruler in the photo. Press the button, click two marks on it, and type the distance between them.</p>
+          <div class="row">
+            <button class="ghost" id="btnRuler" type="button" disabled>Pick two points</button>
+            <label class="inline">distance <input type="number" id="rulerMM" step="0.5" min="0" placeholder="mm"> mm</label>
+          </div>
+        </div>
+        <div class="status" id="calStatus"></div>
+        <div class="why"><b>Why a master washer?</b> Whatever the threshold does to the edge of the master, it does the same to every other washer, so calibrating on a part like the ones you measure cancels most of that error. A ruler cannot. But a threshold that makes the rim look bigger also makes the hole look smaller. Type the master's <b>inner</b> Ø too, and the page solves for the scale and for that edge shift together.</div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-n">4</span>Results</h2>
+        <p class="hint">Rename parts to match the numbers written on the washers, so repeated photos can be compared. Click a row to inspect the part.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Part</th><th class="num" id="thOD">Outer Ø</th><th class="num" id="thID">Inner Ø</th><th class="num">Ellipticity</th><th></th></tr></thead>
+            <tbody id="resBody" class="click"><tr><td colspan="5" class="hint">No parts yet.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="status" id="tiltStatus"></div>
+        <h3>Save this photo's results</h3>
+        <div class="row">
+          <input type="text" id="condLabel" value="photo 1" aria-label="Label for this photo" style="flex:1;min-width:160px">
+          <button id="btnSave" type="button" disabled>Save results</button>
+        </div>
+        <p class="hint">Label what changed, e.g. <i>backlight 1</i>, <i>front light 1</i>, <i>tilted</i>. Take at least three photos of the same washers.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-n">5</span>Compare your photos</h2>
+        <p class="hint">The same washer, measured in several photos. The <b>range</b> is how much your gauge disagrees with itself: its <b>repeatability</b> (same operator, same instrument, short time — ISO 5725). Exercise 3 turns these ranges into a measurement uncertainty.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Part</th><th class="num">photos</th><th class="num">mean outer Ø</th><th class="num">range</th><th class="num">mean inner Ø</th><th class="num">range</th></tr></thead>
+            <tbody id="sumBody"><tr><td colspan="6" class="hint">Save at least one photo.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <label class="inline">group <input type="text" id="group" placeholder="e.g. G3" style="width:90px"></label>
+          <button class="ghost" id="btnCSV" type="button" disabled>Download CSV</button>
+          <button class="danger" id="btnClear" type="button" disabled>Clear saved results</button>
+        </div>
+        <div class="status" id="logStatus"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="card">
+    <h2>Questions for your group</h2>
+    <ol class="q">
+      <li>Move the threshold 20 levels down and 20 levels up. How much do the outer and the inner Ø of one washer change with the <b>ruler</b>, with the <b>master's outer Ø</b> only, and with <b>both</b> master diameters? Explain each difference.</li>
+      <li>Photograph the same washers with backlight and with front light (a desk lamp or the ceiling light). Which gives the smaller range in step 5? What do you see in the zoom view that explains it?</li>
+      <li>The table shows three decimals. Measure one washer with the caliper. How many of those decimals are meaningful?</li>
+      <li>Tilt the camera by about 15° and look at the ellipticity. Why does the error grow when the master is in one corner of the photo and the part in the opposite one?</li>
+      <li>The specification allows the outer Ø to vary by a few tenths of a millimetre. Is your camera gauge good enough to check it? Use your ranges — Exercise 3 answers this properly.</li>
+    </ol>
+  </div>
+
+  <details>
+    <summary>Under the hood — the same measurement in Python</summary>
+    <div class="in">
+      <p class="hint" style="margin-top:0">For the curious: what this page does, in a few lines of Python. The notebook runs it step by step on the example photo or on yours, with plots — nothing to install, it runs on Google Colab (a free Google account is needed).</p>
+      <p><a class="btn" href="https://colab.research.google.com/github/LolloCappo/student-hub/blob/main/materials/quality-management/lab/notebooks/2-camera-gauge.ipynb" target="_blank" rel="noopener">Open the notebook in Colab</a></p>
+<pre id="pyCode">import cv2, numpy as np
+from scipy import ndimage
+
+img = cv2.imread("washers.jpg", cv2.IMREAD_GRAYSCALE)        # grey levels, 0 = black, 255 = white
+t, _ = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)   # the suggested threshold
+metal  = img < t                                            # dark washers on a bright backlight
+filled = ndimage.binary_fill_holes(metal)                   # each washer with its hole filled in
+lab, n = ndimage.label(filled)                              # give every washer a number
+
+idx   = np.arange(1, n + 1)
+a_out = ndimage.sum(filled, lab, idx)                       # area inside the outer edge
+a_in  = a_out - ndimage.sum(metal, lab, idx)                # area of the hole
+edge  = np.unique(np.r_[lab[0], lab[-1], lab[:, 0], lab[:, -1]])
+keep  = (a_out > 2000) & ~np.isin(idx, edge)                # no specks, nothing cut by the edge
+od_px = 2 * np.sqrt(a_out[keep] / np.pi)                    # diameter of a circle of the same area
+id_px = 2 * np.sqrt(a_in[keep] / np.pi)
+
+master = 0                                  # index of your master washer in the list
+mm_per_px = 15.94 / od_px[master]           # its caliper reading, in mm
+for k in range(len(od_px)):
+    print(f"part {k}: outer {od_px[k] * mm_per_px:.3f} mm, inner {id_px[k] * mm_per_px:.3f} mm")</pre>
+      <button class="ghost" id="btnCopy" type="button">Copy code</button>
+      <p class="hint">Two ideas carry the whole method. A diameter from an <b>area</b> (Ø = 2√(A/π)) averages over hundreds of edge pixels, so it is far steadier than measuring from one edge to the other. And the <b>hole</b> is the background enclosed by the part, found by filling the part in and subtracting.</p>
+    </div>
+  </details>
+
+  <div class="card std">
+    <b>Standards behind this exercise.</b> ISO 7089 — the washers and their tolerances ·
+    ISO 13385-1 — callipers, the reference instrument ·
+    ISO 5725-2 — repeatability: same operator, instrument and conditions, short time ·
+    JCGM 100 (GUM) — expressing measurement uncertainty.
+  </div>
+</main>
+
+<footer>Quality Management · BSc in Engineering Management · Università degli Studi di Perugia · Prof. G. Rossi, dr. L. Capponi</footer>
+
+<div id="lightbox" role="button" aria-label="Lightbox: click to close"><p>Lightbox — turn screen brightness to maximum. Click or press Esc to close.</p></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   Camera gauge — everything runs locally, no libraries.
+   Pipeline: image -> grey -> threshold -> connected parts -> filled area
+   -> equivalent diameters (px) -> calibration (mm/px) -> results.
+   ===================================================================== */
+const $ = (s) => document.querySelector(s);
+const MAX_SIDE = 3200;          // working resolution cap (long side, px)
+const LOG_KEY = 'qm-lab-gauge-log-v1';
+
+const st = {
+  name: '', W: 0, H: 0, scaleDown: 1,
+  src: null,            // offscreen canvas with the working image
+  gray: null, hist: null, otsu: 128, thr: 128, light: false,
+  labels: null, comps: [], parts: [], ignored: { edge: 0, small: 0, irregular: 0 },
+  overlay: null,        // canvas with the part mask
+  sel: -1,              // index into st.parts
+  cal: { mode: 'master', masterKey: null, masterMM: null, pts: [], picking: false, rulerMM: null },
+  mmPerPx: null,
+  edgePx: 0,            // apparent outward shift of every edge, from a two-diameter master
+  keys: 0,             // running id so parts keep their names across re-thresholding
+};
+
+/* ---------------- storage (never required) ---------------- */
+function loadLog() { try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch (e) { return []; } }
+function saveLog(log) { try { localStorage.setItem(LOG_KEY, JSON.stringify(log)); } catch (e) { /* private mode: keep in memory */ } }
+let LOG = loadLog();
+try { $('#group').value = localStorage.getItem('qm-lab-group') || ''; } catch (e) {}
+
+/* ---------------- loading ---------------- */
+$('#file').addEventListener('change', (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  const url = URL.createObjectURL(f);
+  loadFromURL(url, f.name, () => URL.revokeObjectURL(url));
+  e.target.value = '';
+});
+$('#btnDemo').addEventListener('click', () => {
+  if (window.DEMO_IMAGE) { loadFromURL(window.DEMO_IMAGE, 'example photo'); return; }
+  const s = document.createElement('script');
+  s.src = 'img/demo-washers.js';
+  s.onload = () => loadFromURL(window.DEMO_IMAGE, 'example photo');
+  s.onerror = () => setStatus('#loadStatus', 'The example could not be loaded.', true);
+  document.head.appendChild(s);
+});
+
+function loadFromURL(url, name, done) {
+  setStatus('#loadStatus', 'Reading the photo…');
+  const im = new Image();
+  im.onload = () => { if (done) done(); setImage(im, name); };
+  im.onerror = () => {
+    if (done) done();
+    setStatus('#loadStatus', 'This browser cannot read that photo. iPhone: Settings → Camera → Formats → Most Compatible, or take the photo from this page on the phone.', true);
+  };
+  im.src = url;
+}
+
+function setImage(im, name) {
+  const w0 = im.naturalWidth, h0 = im.naturalHeight;
+  const k = Math.min(1, MAX_SIDE / Math.max(w0, h0));
+  const W = Math.round(w0 * k), H = Math.round(h0 * k);
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(im, 0, 0, W, H);
+  const rgba = ctx.getImageData(0, 0, W, H).data;
+  const N = W * H, gray = new Uint8Array(N), hist = new Float64Array(256);
+  for (let i = 0, j = 0; i < N; i++, j += 4) {
+    const g = (299 * rgba[j] + 587 * rgba[j + 1] + 114 * rgba[j + 2] + 500) / 1000 | 0;
+    gray[i] = g; hist[g]++;
+  }
+  Object.assign(st, { name, W, H, scaleDown: k, src: c, gray, hist, sel: -1, parts: [], comps: [] });
+  st.cal.masterKey = null; st.cal.pts = []; st.cal.picking = false; st.mmPerPx = null;
+  st.otsu = otsu(hist);
+  // Polarity: the background is whichever side of the threshold holds most pixels.
+  let below = 0; for (let g = 0; g < st.otsu; g++) below += hist[g];
+  st.light = below > N / 2;
+  $('#chkLight').checked = st.light;
+  st.thr = st.otsu;
+  $('#thr').disabled = false; $('#btnAuto').disabled = false; $('#thr').value = st.thr;
+  $('#empty').hidden = true; $('#view').hidden = false;
+  const v = $('#view'); v.width = W; v.height = H;
+  setStatus('#loadStatus', `${name} · ${w0} × ${h0} px` + (k < 1 ? ` (measured at ${W} × ${H})` : ''));
+  segment(); updateCalibration(); renderAll();
+}
+
+/* ---------------- Otsu threshold ---------------- */
+function otsu(hist) {
+  let total = 0, sum = 0;
+  for (let g = 0; g < 256; g++) { total += hist[g]; sum += g * hist[g]; }
+  let wB = 0, sumB = 0, best = -1, thr = 128;
+  for (let t = 0; t < 256; t++) {
+    wB += hist[t]; if (!wB) continue;
+    const wF = total - wB; if (!wF) break;
+    sumB += t * hist[t];
+    const mB = sumB / wB, mF = (sum - sumB) / wF, between = wB * wF * (mB - mF) * (mB - mF);
+    if (between > best) { best = between; thr = t + 1; }
+  }
+  return Math.min(254, Math.max(1, thr));
+}
+
+/* ---------------- segmentation ---------------- */
+function segment() {
+  const { W, H, gray, thr, light } = st, N = W * H;
+  const fg = new Uint8Array(N);
+  if (light) { for (let i = 0; i < N; i++) fg[i] = gray[i] >= thr ? 1 : 0; }
+  else { for (let i = 0; i < N; i++) fg[i] = gray[i] < thr ? 1 : 0; }
+
+  const labels = new Int32Array(N), stack = new Int32Array(N), comps = [null];
+  for (let i = 0; i < N; i++) {
+    if (!fg[i] || labels[i]) continue;
+    const id = comps.length;
+    let sp = 0; stack[sp++] = i; labels[i] = id;
+    let area = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0, x0 = W, y0 = H, x1 = 0, y1 = 0, edge = false;
+    while (sp) {
+      const p = stack[--sp], x = p % W, y = (p - x) / W;
+      area++; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y;
+      if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+      if (x === 0 || y === 0 || x === W - 1 || y === H - 1) edge = true;
+      for (let dy = -1; dy <= 1; dy++) {
+        const yy = y + dy; if (yy < 0 || yy >= H) continue;
+        for (let dx = -1; dx <= 1; dx++) {
+          const xx = x + dx; if (xx < 0 || xx >= W) continue;
+          const q = yy * W + xx;
+          if (fg[q] && !labels[q]) { labels[q] = id; stack[sp++] = q; }
+        }
+      }
+    }
+    comps.push({ id, area, sx, sy, sxx, syy, sxy, x0, y0, x1, y1, edge, status: 'small' });
+  }
+
+  const minArea = Math.max(150, 0.0003 * N);
+  const ignored = { edge: 0, small: 0, irregular: 0 };
+  const parts = [];
+  for (let c = 1; c < comps.length; c++) {
+    const k = comps[c];
+    if (k.area < minArea) { k.status = 'small'; if (k.area > minArea * 0.2) ignored.small++; continue; }
+    if (k.edge) { k.status = 'edge'; ignored.edge++; continue; }
+    measureComp(k, labels);
+    k.status = k.irregular ? 'irregular' : 'part';
+    if (k.irregular) ignored.irregular++;
+    parts.push(k);
+  }
+  // reading order: rows top to bottom, left to right within a row
+  const med = parts.length ? parts.map(p => p.odPx).sort((a, b) => a - b)[parts.length >> 1] : 1;
+  parts.sort((a, b) => a.cy - b.cy);
+  const rows = [];
+  for (const p of parts) {
+    const r = rows.length && Math.abs(p.cy - rows[rows.length - 1][0].cy) < med * 0.6 ? rows[rows.length - 1] : (rows.push([]), rows[rows.length - 1]);
+    r.push(p);
+  }
+  const ordered = rows.flatMap(r => r.sort((a, b) => a.cx - b.cx));
+  carryNames(ordered);
+  st.labels = labels; st.comps = comps; st.parts = ordered; st.ignored = ignored;
+  buildOverlay();
+}
+
+/* Filled shape = part + the background it encloses (the hole). */
+function measureComp(k, labels) {
+  const { W, H } = st;
+  const bx0 = Math.max(0, k.x0 - 1), by0 = Math.max(0, k.y0 - 1);
+  const bx1 = Math.min(W - 1, k.x1 + 1), by1 = Math.min(H - 1, k.y1 + 1);
+  const bw = bx1 - bx0 + 1, bh = by1 - by0 + 1, n = bw * bh;
+  const outside = new Uint8Array(n), stack = new Int32Array(n);
+  let sp = 0;
+  const seed = (lx, ly) => {
+    const li = ly * bw + lx;
+    if (outside[li] || labels[(by0 + ly) * W + bx0 + lx] === k.id) return;
+    outside[li] = 1; stack[sp++] = li;
+  };
+  for (let x = 0; x < bw; x++) { seed(x, 0); seed(x, bh - 1); }
+  for (let y = 0; y < bh; y++) { seed(0, y); seed(bw - 1, y); }
+  while (sp) {
+    const li = stack[--sp], lx = li % bw, ly = (li - lx) / bw;
+    if (lx > 0) seed(lx - 1, ly); if (lx < bw - 1) seed(lx + 1, ly);
+    if (ly > 0) seed(lx, ly - 1); if (ly < bh - 1) seed(lx, ly + 1);
+  }
+  let ha = 0, hx = 0, hy = 0, hxx = 0, hyy = 0, hxy = 0;
+  for (let ly = 0; ly < bh; ly++) for (let lx = 0; lx < bw; lx++) {
+    const li = ly * bw + lx;
+    if (outside[li] || labels[(by0 + ly) * W + bx0 + lx] === k.id) continue;
+    const x = bx0 + lx, y = by0 + ly;
+    ha++; hx += x; hy += y; hxx += x * x; hyy += y * y; hxy += x * y;
+  }
+  const A = k.area + ha;
+  const cx = (k.sx + hx) / A, cy = (k.sy + hy) / A;
+  const mxx = (k.sxx + hxx) / A - cx * cx, myy = (k.syy + hyy) / A - cy * cy, mxy = (k.sxy + hxy) / A - cx * cy;
+  const tr = mxx + myy, d = Math.sqrt(Math.max(0, tr * tr / 4 - (mxx * myy - mxy * mxy)));
+  const l1 = tr / 2 + d, l2 = Math.max(1e-9, tr / 2 - d);
+  Object.assign(k, {
+    filled: A, hole: ha, cx, cy,
+    odPx: 2 * Math.sqrt(A / Math.PI),
+    idPx: ha > 0.02 * A ? 2 * Math.sqrt(ha / Math.PI) : null,
+    ratio: Math.sqrt(l2 / l1),
+    // a filled ellipse has area = pi*a*b with a = 2*sqrt(l1), b = 2*sqrt(l2)
+    irregular: A / (4 * Math.PI * Math.sqrt(l1 * l2)) < 0.93,
+  });
+}
+
+/* Keep user-given names and the master when the threshold changes. */
+function carryNames(parts) {
+  const old = st.parts || [];
+  for (const p of parts) {
+    let best = null, bd = Infinity;
+    for (const o of old) { const d = Math.hypot(o.cx - p.cx, o.cy - p.cy); if (d < bd) { bd = d; best = o; } }
+    if (best && bd < p.odPx * 0.4) { p.key = best.key; p.name = best.name; }
+    else { p.key = ++st.keys; p.name = null; }
+  }
+  parts.forEach((p, i) => { if (!p.name) p.name = String(i + 1); });
+}
+
+function buildOverlay() {
+  const { W, H, labels, comps } = st, N = W * H;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d'), img = ctx.createImageData(W, H), d = img.data;
+  const color = comps.map(k => !k ? null : k.status === 'part' ? [43, 77, 154, 120] : k.status === 'small' ? [229, 48, 49, 70] : [229, 48, 49, 110]);
+  for (let i = 0, j = 0; i < N; i++, j += 4) {
+    const l = labels[i]; if (!l) continue;
+    const col = color[l]; d[j] = col[0]; d[j + 1] = col[1]; d[j + 2] = col[2]; d[j + 3] = col[3];
+  }
+  ctx.putImageData(img, 0, 0);
+  st.overlay = c;
+}
+
+/* ---------------- calibration ---------------- */
+function masterPart() { return st.parts.find(p => p.key === st.cal.masterKey) || null; }
+function updateCalibration() {
+  const c = st.cal; let msg = '', warn = false, edgeMsg = '';
+  st.mmPerPx = null; st.edgePx = 0;
+  if (c.mode === 'master') {
+    const m = masterPart(), mm = parseFloat($('#masterMM').value), mmIn = parseFloat($('#masterIDmm').value);
+    if (!st.parts.length) msg = '';
+    else if (!m) msg = 'Click your master washer in the photo, then press "Use selected part as master".';
+    else if (!(mm > 0)) msg = `Master: part ${m.name}. Now type its caliper diameter.`;
+    else if (mmIn > 0 && m.idPx && mmIn < mm) {
+      // Two diameters, two unknowns. The threshold moves every edge outward by b px:
+      //   outer: OD_px = OD/k + 2b      inner: ID_px = ID/k - 2b
+      // Adding them removes b:  k = (OD + ID) / (OD_px + ID_px)
+      st.mmPerPx = (mm + mmIn) / (m.odPx + m.idPx);
+      st.edgePx = (m.odPx - mm / st.mmPerPx) / 2;
+      c.masterMM = mm;
+      edgeMsg = ` Edge correction: at this threshold the metal looks <b>${fmt(Math.abs(st.edgePx), 2)} px ${st.edgePx >= 0 ? 'bigger' : 'smaller'}</b> on every edge (${fmt(Math.abs(st.edgePx) * st.mmPerPx * 1000, 0)} µm); all diameters are corrected for it.`;
+    }
+    else { st.mmPerPx = mm / m.odPx; c.masterMM = mm; }
+  } else {
+    const mm = parseFloat($('#rulerMM').value);
+    if (c.pts.length < 2) msg = c.picking ? `Click point ${c.pts.length + 1} of 2 on the ruler.` : 'Press "Pick two points".';
+    else if (!(mm > 0)) msg = 'Now type the distance between the two points.';
+    else {
+      const dpx = Math.hypot(c.pts[1][0] - c.pts[0][0], c.pts[1][1] - c.pts[0][1]);
+      if (dpx < 20) { msg = 'The two points are too close together — pick marks far apart.'; warn = true; }
+      else st.mmPerPx = mm / dpx;
+    }
+  }
+  if (st.mmPerPx) {
+    msg = `Scale: <b>${fmt(st.mmPerPx, 4)} mm per pixel</b> (${fmt(1 / st.mmPerPx, 2)} pixels per mm). One pixel is ${fmt(st.mmPerPx * 1000, 0)} µm on the washer.` + edgeMsg;
+  }
+  setStatus('#calStatus', msg, warn, true);
+  $('#btnSave').disabled = !(st.parts.length && st.mmPerPx);
+}
+
+$('#calMaster').addEventListener('click', () => setCalMode('master'));
+$('#calRuler').addEventListener('click', () => setCalMode('ruler'));
+function setCalMode(m) {
+  st.cal.mode = m; st.cal.picking = false;
+  $('#calMaster').setAttribute('aria-pressed', m === 'master');
+  $('#calRuler').setAttribute('aria-pressed', m === 'ruler');
+  $('#panelMaster').hidden = m !== 'master'; $('#panelRuler').hidden = m !== 'ruler';
+  updateCalibration(); renderAll();
+}
+$('#btnSetMaster').addEventListener('click', () => {
+  if (st.sel < 0) return;
+  st.cal.masterKey = st.parts[st.sel].key;
+  updateCalibration(); renderAll();
+  $('#masterMM').focus();
+});
+$('#masterMM').addEventListener('input', () => { updateCalibration(); renderAll(); });
+$('#masterIDmm').addEventListener('input', () => { updateCalibration(); renderAll(); });
+
+/* Measured diameters in mm, corrected for the edge shift when it is known. */
+function odMM(p) { return st.mmPerPx ? (p.odPx - 2 * st.edgePx) * st.mmPerPx : null; }
+function idMM(p) { return st.mmPerPx && p.idPx ? (p.idPx + 2 * st.edgePx) * st.mmPerPx : null; }
+$('#rulerMM').addEventListener('input', () => { updateCalibration(); renderAll(); });
+$('#btnRuler').addEventListener('click', () => { st.cal.pts = []; st.cal.picking = true; updateCalibration(); renderAll(); });
+
+/* ---------------- threshold controls ---------------- */
+$('#thr').addEventListener('input', (e) => { st.thr = +e.target.value; resegment(); });
+$('#btnAuto').addEventListener('click', () => { st.thr = st.otsu; $('#thr').value = st.thr; resegment(); });
+$('#chkLight').addEventListener('change', (e) => { st.light = e.target.checked; resegment(); });
+let segTimer = null;
+function resegment() {
+  $('#thrVal').textContent = st.thr;
+  drawHist();
+  clearTimeout(segTimer);
+  segTimer = setTimeout(() => {
+    const selKey = st.sel >= 0 ? st.parts[st.sel].key : null;
+    segment();
+    st.sel = st.parts.findIndex(p => p.key === selKey);
+    updateCalibration(); renderAll();
+  }, 60);
+}
+
+/* ---------------- clicks on the photo ---------------- */
+$('#view').addEventListener('click', (e) => {
+  if (!st.W) return;
+  const r = e.target.getBoundingClientRect();
+  const x = (e.clientX - r.left) * st.W / r.width, y = (e.clientY - r.top) * st.H / r.height;
+  if (st.cal.mode === 'ruler' && st.cal.picking) {
+    st.cal.pts.push([x, y]);
+    if (st.cal.pts.length === 2) st.cal.picking = false;
+    updateCalibration(); renderAll(); return;
+  }
+  let best = -1, bd = Infinity;
+  st.parts.forEach((p, i) => { const d = Math.hypot(p.cx - x, p.cy - y); if (d < p.odPx * 0.6 && d < bd) { bd = d; best = i; } });
+  st.sel = best; renderAll();
+});
+
+/* ---------------- rendering ---------------- */
+function renderAll() {
+  drawView(); drawHist(); drawTable(); drawDetail(); drawSummary();
+  $('#thrVal').textContent = st.W ? st.thr : '–';
+  $('#btnSetMaster').disabled = st.sel < 0;
+  $('#btnRuler').disabled = !st.W;
+  const ig = st.ignored, extra = [];
+  if (ig.edge) extra.push(`${ig.edge} touching the edge of the photo`);
+  if (ig.irregular) extra.push(`${ig.irregular} not round — parts touching each other, or a shadow?`);
+  if (ig.small) extra.push(`${ig.small} small specks`);
+  if (st.W) setStatus('#segStatus', `<b>${st.parts.filter(p => !p.irregular).length} parts found.</b>` + (extra.length ? ' Not measured: ' + extra.join('; ') + '.' : ''), false, true);
+}
+
+function drawView() {
+  if (!st.W) return;
+  const v = $('#view'), ctx = v.getContext('2d');
+  ctx.drawImage(st.src, 0, 0);
+  if ($('#chkMask').checked && st.overlay) ctx.drawImage(st.overlay, 0, 0);
+  const lw = Math.max(2, st.W / 700), fs = Math.max(14, st.W / 55);
+  ctx.font = `600 ${fs}px system-ui, sans-serif`; ctx.textBaseline = 'middle';
+  if ($('#chkOutline').checked) {
+    st.parts.forEach((p, i) => {
+      const isM = p.key === st.cal.masterKey, isS = i === st.sel;
+      ctx.lineWidth = isS ? lw * 2.2 : lw;
+      ctx.strokeStyle = p.irregular ? '#E53031' : isM ? '#E53031' : '#ffd23f';
+      ctx.beginPath(); ctx.arc(p.cx, p.cy, p.odPx / 2, 0, 2 * Math.PI); ctx.stroke();
+      if (p.idPx) { ctx.beginPath(); ctx.arc(p.cx, p.cy, p.idPx / 2, 0, 2 * Math.PI); ctx.stroke(); }
+      const label = isM ? `${p.name} · master` : p.name;
+      const tw = ctx.measureText(label).width, bx = p.cx - tw / 2 - fs * 0.35, by = p.cy - p.odPx / 2 - fs * 1.15;
+      ctx.fillStyle = isM ? '#E53031' : isS ? '#2B4D9A' : 'rgba(21,24,30,0.78)';
+      ctx.fillRect(bx, by - fs * 0.6, tw + fs * 0.7, fs * 1.2);
+      ctx.fillStyle = '#fff'; ctx.fillText(label, bx + fs * 0.35, by);
+    });
+  }
+  const pts = st.cal.mode === 'ruler' ? st.cal.pts : [];
+  if (pts.length) {
+    ctx.strokeStyle = '#E53031'; ctx.fillStyle = '#E53031'; ctx.lineWidth = lw;
+    if (pts.length === 2) { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); ctx.lineTo(pts[1][0], pts[1][1]); ctx.stroke(); }
+    pts.forEach(([x, y]) => { ctx.beginPath(); ctx.arc(x, y, lw * 3, 0, 2 * Math.PI); ctx.fill(); });
+  }
+  $('#viewInfo').textContent = st.cal.picking ? 'Click on the ruler marks.' : 'Click a part to inspect it.';
+}
+
+function drawHist() {
+  const svg = $('#histSvg');
+  if (!st.hist) { svg.innerHTML = ''; return; }
+  const Wd = 520, Hd = 120, L = 6, R = 6, T = 6, B = 22, pw = (Wd - L - R) / 256;
+  let mx = 0; for (let g = 0; g < 256; g++) mx = Math.max(mx, Math.sqrt(st.hist[g]));
+  const y = (v) => T + (Hd - T - B) * (1 - Math.sqrt(v) / mx);
+  let partPath = '', bgPath = '';
+  for (let g = 0; g < 256; g++) {
+    if (!st.hist[g]) continue;
+    const x = L + g * pw, top = y(st.hist[g]);
+    const seg = `M${x.toFixed(2)} ${(Hd - B).toFixed(2)}V${top.toFixed(2)}h${(pw * 0.86).toFixed(2)}V${(Hd - B).toFixed(2)}Z`;
+    const isPart = st.light ? g >= st.thr : g < st.thr;
+    if (isPart) partPath += seg; else bgPath += seg;
+  }
+  const tx = L + st.thr * pw, ox = L + st.otsu * pw;
+  svg.innerHTML =
+    `<line x1="${L}" y1="${Hd - B}" x2="${Wd - R}" y2="${Hd - B}" stroke="#c5cbd6"/>` +
+    `<path d="${bgPath}" fill="#b9c0cc"/><path d="${partPath}" fill="#2B4D9A"/>` +
+    `<line x1="${ox}" y1="${T}" x2="${ox}" y2="${Hd - B}" stroke="#2B4D9A" stroke-dasharray="3 3" stroke-width="1"/>` +
+    `<line x1="${tx}" y1="${T - 4}" x2="${tx}" y2="${Hd - B + 4}" stroke="#E53031" stroke-width="2"/>` +
+    `<text x="${L}" y="${Hd - 6}" font-size="11" fill="#6b7280">0 black</text>` +
+    `<text x="${Wd - R}" y="${Hd - 6}" font-size="11" fill="#6b7280" text-anchor="end">255 white</text>` +
+    `<text x="${Math.min(Math.max(tx, 60), Wd - 60)}" y="${Hd - 6}" font-size="11" fill="#E53031" text-anchor="middle">threshold ${st.thr}</text>` +
+    `<rect id="histHit" x="${L}" y="0" width="${Wd - L - R}" height="${Hd - B}" fill="transparent"/>`;
+  const hit = svg.querySelector('#histHit'), tip = $('#histTip');
+  hit.addEventListener('mousemove', (e) => {
+    const r = svg.getBoundingClientRect(), g = Math.max(0, Math.min(255, Math.floor(((e.clientX - r.left) * Wd / r.width - L) / pw)));
+    tip.style.display = 'block';
+    tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px';
+    tip.textContent = `grey ${g} · ${Math.round(st.hist[g]).toLocaleString('en')} px`;
+  });
+  hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+}
+
+function drawTable() {
+  const tb = $('#resBody'), cal = !!st.mmPerPx, k = st.mmPerPx || 1, u = cal ? 'mm' : 'px';
+  $('#thOD').textContent = `Outer Ø (${u})`; $('#thID').textContent = `Inner Ø (${u})`;
+  if (!st.parts.length) { tb.innerHTML = `<tr><td colspan="5" class="hint">${st.W ? 'No parts found — try moving the threshold.' : 'No parts yet.'}</td></tr>`; $('#tiltStatus').textContent = ''; return; }
+  const dec = cal ? 3 : 1;
+  tb.innerHTML = st.parts.map((p, i) => {
+    const isM = p.key === st.cal.masterKey;
+    const tags = (isM ? '<span class="tag m">master</span> ' : '') + (p.irregular ? '<span class="tag w">not round</span>' : '');
+    return `<tr data-i="${i}" class="${i === st.sel ? 'sel' : ''} ${isM ? 'master' : ''}">
+      <td><input type="text" value="${esc(p.name)}" data-k="${p.key}" aria-label="Part name"></td>
+      <td class="num">${cal ? fmt(odMM(p), dec) : fmt(p.odPx, dec)}</td>
+      <td class="num">${p.idPx ? (cal ? fmt(idMM(p), dec) : fmt(p.idPx, dec)) : '—'}</td>
+      <td class="num">${fmt((1 - p.ratio) * 100, 1)} %</td>
+      <td>${tags}</td></tr>`;
+  }).join('');
+  tb.querySelectorAll('tr').forEach(tr => tr.addEventListener('click', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    st.sel = +tr.dataset.i; renderAll();
+  }));
+  tb.querySelectorAll('input').forEach(inp => inp.addEventListener('change', () => {
+    const p = st.parts.find(q => q.key === +inp.dataset.k); if (p) p.name = inp.value.trim() || p.name;
+    drawView(); drawDetail();
+  }));
+  // Tilt: a circle seen at an angle becomes an ellipse with axis ratio = cos(tilt).
+  const good = st.parts.filter(p => !p.irregular).map(p => p.ratio).sort((a, b) => a - b);
+  if (good.length) {
+    const r = good[good.length >> 1], tilt = Math.acos(Math.min(1, r)) * 180 / Math.PI;
+    const msg = tilt < 4 ? `The parts look round: the camera is close to parallel (tilt under ~4°).`
+      : `The parts look ${fmt((1 - r) * 100, 1)} % elliptical: the camera is tilted by about ${fmt(tilt, 0)}°. Diameters shrink in the tilted direction.`;
+    setStatus('#tiltStatus', msg, tilt >= 8);
+  }
+}
+
+function drawDetail() {
+  const box = $('#detail');
+  if (st.sel < 0 || !st.parts[st.sel]) { box.hidden = true; return; }
+  box.hidden = false;
+  const p = st.parts[st.sel], z = $('#zoom'), ctx = z.getContext('2d');
+  const half = p.odPx * 0.62, sx = p.cx - half, sy = p.cy - half, s = 2 * half;
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = '#e9ebef'; ctx.fillRect(0, 0, 220, 220);
+  ctx.drawImage(st.src, sx, sy, s, s, 0, 0, 220, 220);
+  const f = 220 / s;
+  ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc((p.cx - sx) * f, (p.cy - sy) * f, p.odPx / 2 * f, 0, 2 * Math.PI); ctx.stroke();
+  if (p.idPx) { ctx.beginPath(); ctx.arc((p.cx - sx) * f, (p.cy - sy) * f, p.idPx / 2 * f, 0, 2 * Math.PI); ctx.stroke(); }
+  const e = edgeWidth(p);
+  const k = st.mmPerPx;
+  $('#detTitle').textContent = `Part ${p.name}` + (p.key === st.cal.masterKey ? ' (master)' : '');
+  let t = `Outer Ø ${k ? fmt(odMM(p), 3) + ' mm' : fmt(p.odPx, 1) + ' px'} across ${fmt(p.odPx, 0)} pixels.`;
+  if (e) t += ` The edge is blurred over about <b>${fmt(e, 1)} pixels</b>` + (k ? ` (${fmt(e * k, 2)} mm)` : '') + ': that ramp of greys is where the threshold places the edge.';
+  $('#detText').innerHTML = t;
+}
+
+/* 10–90 % edge width, averaged over 32 rays across the outer edge. */
+function edgeWidth(p) {
+  const { gray, W, H } = st, R = p.odPx / 2;
+  const sample = (x, y) => {
+    const x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0;
+    if (x0 < 0 || y0 < 0 || x0 >= W - 1 || y0 >= H - 1) return NaN;
+    const i = y0 * W + x0;
+    return gray[i] * (1 - fx) * (1 - fy) + gray[i + 1] * fx * (1 - fy) + gray[i + W] * (1 - fx) * fy + gray[i + W + 1] * fx * fy;
+  };
+  const span = Math.max(6, R * 0.12), widths = [];
+  for (let a = 0; a < 32; a++) {
+    const th = a / 32 * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th), prof = [];
+    for (let d = -span; d <= span; d += 0.25) prof.push(sample(p.cx + (R + d) * c, p.cy + (R + d) * s));
+    if (prof.some(isNaN)) continue;
+    const inner = prof.slice(0, 8).reduce((a, b) => a + b) / 8, outer = prof.slice(-8).reduce((a, b) => a + b) / 8;
+    if (Math.abs(outer - inner) < 20) continue;
+    const at = (frac) => {
+      const lvl = inner + frac * (outer - inner);
+      for (let j = 1; j < prof.length; j++) {
+        if ((prof[j - 1] - lvl) * (prof[j] - lvl) <= 0 && prof[j] !== prof[j - 1]) return (j - 1 + (lvl - prof[j - 1]) / (prof[j] - prof[j - 1])) * 0.25;
+      }
+      return NaN;
+    };
+    const w = at(0.9) - at(0.1);
+    if (w > 0) widths.push(w);
+  }
+  if (widths.length < 8) return null;
+  widths.sort((a, b) => a - b);
+  return widths[widths.length >> 1];
+}
+
+/* ---------------- saving and comparing ---------------- */
+$('#btnSave').addEventListener('click', () => {
+  if (!st.mmPerPx) return;
+  const cond = $('#condLabel').value.trim() || 'photo';
+  const t = new Date().toISOString();
+  for (const p of st.parts) {
+    if (p.irregular) continue;
+    LOG.push({
+      time: t, photo: st.name, condition: cond, part: p.name,
+      od_mm: +odMM(p).toFixed(4), id_mm: p.idPx ? +idMM(p).toFixed(4) : null,
+      ellipticity_pct: +((1 - p.ratio) * 100).toFixed(2), master: p.key === st.cal.masterKey,
+      calibration: st.cal.mode === 'ruler' ? 'ruler' : st.edgePx ? 'master outer+inner' : 'master outer',
+      mm_per_px: +st.mmPerPx.toFixed(6), edge_px: +st.edgePx.toFixed(3), threshold: st.thr,
+    });
+  }
+  saveLog(LOG);
+  const m = cond.match(/^(.*?)(\d+)$/);
+  $('#condLabel').value = m ? m[1] + (+m[2] + 1) : cond + ' 2';
+  setStatus('#logStatus', `Saved ${st.parts.filter(p => !p.irregular).length} parts as “${esc(cond)}”.`, false, true);
+  drawSummary();
+});
+
+function drawSummary() {
+  const tb = $('#sumBody');
+  $('#btnCSV').disabled = $('#btnClear').disabled = !LOG.length;
+  if (!LOG.length) { tb.innerHTML = '<tr><td colspan="6" class="hint">Save at least one photo.</td></tr>'; return; }
+  const by = new Map();
+  for (const r of LOG) { if (!by.has(r.part)) by.set(r.part, []); by.get(r.part).push(r); }
+  const names = [...by.keys()].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+  const stat = (arr) => arr.length ? { mean: arr.reduce((a, b) => a + b) / arr.length, range: Math.max(...arr) - Math.min(...arr) } : null;
+  tb.innerHTML = names.map(n => {
+    const rows = by.get(n), od = stat(rows.map(r => r.od_mm)), id = stat(rows.map(r => r.id_mm).filter(v => v != null));
+    const one = rows.length < 2;
+    return `<tr><td>${esc(n)}${rows.some(r => r.master) ? ' <span class="tag m">master</span>' : ''}</td><td class="num">${rows.length}</td>
+      <td class="num">${fmt(od.mean, 3)}</td><td class="num">${one ? '—' : fmt(od.range, 3)}</td>
+      <td class="num">${id ? fmt(id.mean, 3) : '—'}</td><td class="num">${id && !one ? fmt(id.range, 3) : '—'}</td></tr>`;
+  }).join('');
+}
+
+$('#group').addEventListener('change', (e) => { try { localStorage.setItem('qm-lab-group', e.target.value.trim()); } catch (er) {} });
+$('#btnCSV').addEventListener('click', () => {
+  const g = $('#group').value.trim();
+  const cols = ['group', 'time', 'photo', 'condition', 'part', 'od_mm', 'id_mm', 'ellipticity_pct', 'master', 'calibration', 'mm_per_px', 'edge_px', 'threshold'];
+  const q = (v) => v == null ? '' : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+  const csv = [cols.join(',')].concat(LOG.map(r => cols.map(c => q(c === 'group' ? g : r[c])).join(','))).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `gauge-${g || 'group'}.csv`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$('#btnClear').addEventListener('click', () => {
+  if (!confirm('Delete all saved results on this device?')) return;
+  LOG = []; saveLog(LOG); drawSummary(); setStatus('#logStatus', 'Saved results cleared.');
+});
+
+/* ---------------- misc ---------------- */
+$('#chkMask').addEventListener('change', drawView);
+$('#chkOutline').addEventListener('change', drawView);
+$('#btnCopy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('#pyCode').textContent); $('#btnCopy').textContent = 'Copied'; }
+  catch (e) { $('#btnCopy').textContent = 'Select the code and copy it'; }
+  setTimeout(() => { $('#btnCopy').textContent = 'Copy code'; }, 1800);
+});
+const lb = $('#lightbox');
+$('#btnLight').addEventListener('click', () => {
+  lb.style.display = 'flex';
+  if (lb.requestFullscreen) lb.requestFullscreen().catch(() => {});
+});
+function closeLight() { lb.style.display = 'none'; if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); }
+lb.addEventListener('click', closeLight);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.style.display === 'flex') closeLight(); });
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && lb.style.display === 'flex') lb.style.display = 'none'; });
+
+function fmt(v, d) { return v == null || isNaN(v) ? '—' : v.toFixed(d); }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function setStatus(sel, msg, warn, html) {
+  const el = $(sel); el.classList.toggle('warn', !!warn);
+  if (html) el.innerHTML = msg; else el.textContent = msg;
+}
+drawSummary();
+
+/* ---------------- self-test (open with ?autotest) ----------------
+   Loads the synthetic example, calibrates on the master with its true
+   diameter and reports the error on every other part. */
+if (/[?&]autotest\b/.test(location.search)) {
+  const s = document.createElement('script'); s.src = 'img/demo-washers.js';
+  s.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      setImage(im, 'example photo');
+      const T = window.DEMO_TRUTH, out = {};
+      const run = (thr) => {
+        st.thr = thr; segment();
+        const match = (t) => st.parts.reduce((b, p) => { const d = Math.hypot(p.cx - t.cx_px * st.scaleDown, p.cy - t.cy_px * st.scaleDown); return d < b.d ? { p, d } : b; }, { p: null, d: Infinity }).p;
+        const m = match(T.parts[0]), res = { thr, parts: st.parts.length };
+        st.cal.mode = 'master'; st.cal.masterKey = m.key;
+        for (const [tag, inner] of [['outer', ''], ['both', String(T.parts[0].id)]]) {
+          $('#masterMM').value = T.parts[0].od; $('#masterIDmm').value = inner; updateCalibration();
+          const eOD = [], eID = [];
+          for (const t of T.parts.slice(1)) { const p = match(t); eOD.push(+(odMM(p) - t.od).toFixed(4)); eID.push(+(idMM(p) - t.id).toFixed(4)); }
+          res[tag] = { scale: +st.mmPerPx.toFixed(5), edgePx: +st.edgePx.toFixed(3), maxOD: Math.max(...eOD.map(Math.abs)), maxID: Math.max(...eID.map(Math.abs)) };
+        }
+        return res;
+      };
+      out.otsu = st.otsu; out.light = st.light;
+      out.runs = [run(st.otsu), run(st.otsu - 20), run(st.otsu + 20)];
+      out.edge = edgeWidth(st.parts[0]);
+      const pre = document.createElement('pre'); pre.id = 'AUTOTEST'; pre.textContent = 'AUTOTEST ' + JSON.stringify(out);
+      document.body.appendChild(pre);
+      // leave the page in a realistic state for a screenshot
+      st.thr = st.otsu; $('#thr').value = st.thr; segment();
+      st.cal.masterKey = st.parts[0].key; st.sel = 2;
+      $('#masterMM').value = T.parts[0].od; $('#masterIDmm').value = ''; updateCalibration(); renderAll();
+    };
+    im.src = window.DEMO_IMAGE;
+  };
+  document.head.appendChild(s);
+}
+</script>
+</body>
+</html>

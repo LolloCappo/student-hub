@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accept or reject the batch — Quality Management lab</title>
+<meta name="description" content="Use the class's camera measurements to decide whether a batch of ISO 7089 washers is acceptable — and how sure you can be.">
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="rules"></div>
+  <div class="top-in">
+    <nav class="nav" aria-label="Lab exercises">
+      <a class="home" href="index.html">Hands-on lab</a>
+      <a href="camera.html">1 · Inside your camera</a>
+      <a href="gauge.html">2 · Build a camera gauge</a>
+      <a href="batch.html" aria-current="page">3 · Accept or reject the batch</a>
+    </nav>
+    <div class="crumbs"><b>Quality Management</b> · Exercise 3 of 3 · about 45 minutes</div>
+    <h1>Accept or reject the batch</h1>
+    <p class="lead">You are the customer's quality engineer. A box of M8 washers to ISO 7089 has arrived, and the class has measured it with the camera gauge. Is the batch good — and how sure can you be, given that your gauge is not perfect either?</p>
+  </div>
+</header>
+
+<main>
+  <div class="two">
+    <div class="card">
+      <h2><span class="step-n">1</span>Load the measurements</h2>
+      <p class="hint">The CSV files downloaded in Exercise 2 — your group's, or every group's for the whole class. Select several files at once to merge them.</p>
+      <div class="row">
+        <label class="btn" for="file">Choose CSV files</label>
+        <input type="file" id="file" accept=".csv,text/csv" multiple hidden>
+        <button class="ghost" id="btnDemo" type="button">Use the example class data</button>
+      </div>
+      <div class="status" id="loadStatus"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step-n">2</span>The specification</h2>
+      <p class="hint">ISO 7089 plain washers, normal series, product grade A. The hole (d1) may only be larger than nominal; the outside (d2) only smaller.</p>
+      <div class="row">
+        <label class="inline">size <select id="size"></select></label>
+        <div class="seg" role="group" aria-label="Characteristic">
+          <button type="button" id="cOD" aria-pressed="true">Outer Ø (d2)</button>
+          <button type="button" id="cID" aria-pressed="false">Inner Ø (d1)</button>
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <label class="inline">LSL <input type="number" id="lsl" step="0.01"> mm</label>
+        <label class="inline">USL <input type="number" id="usl" step="0.01"> mm</label>
+      </div>
+      <div class="status" id="specStatus"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-n">3</span>How good is the gauge?</h2>
+    <p class="hint">Every washer was photographed several times. How much those repeated values disagree is the gauge's <b>repeatability</b> (ISO 5725). Add the uncertainty of the caliper that calibrated it, and you have the measurement uncertainty of each washer's value (GUM).</p>
+    <div class="row">
+      <label class="inline">caliper standard uncertainty <input type="number" id="ucal" step="0.001" min="0" value="0.012"> mm</label>
+    </div>
+    <p class="hint">Default: a caliper with a maximum permissible error of ±0.02 mm (check yours, ISO 13385-1), taken as a rectangular distribution: u = 0.02 / √3 = 0.012 mm.</p>
+    <div class="figs" id="gaugeFigs"></div>
+    <div class="tbl-wrap" style="margin-top:12px">
+      <table>
+        <thead><tr><th>Group</th><th class="num">washers</th><th class="num">photos each</th><th class="num">repeatability s<sub>r</sub> (mm)</th></tr></thead>
+        <tbody id="groupBody"><tr><td colspan="4" class="hint">Load measurements first.</td></tr></tbody>
+      </table>
+    </div>
+    <div class="status" id="gaugeStatus"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-n">4</span>The batch</h2>
+    <p class="hint">One value per washer: the mean of its photos. Masters are left out — their values were set by the caliper.</p>
+    <div class="figs" id="batchFigs"></div>
+    <div class="chart" id="histBox" style="margin-top:12px">
+      <svg id="histSvg" viewBox="0 0 760 240" role="img" aria-label="Histogram of washer diameters with the tolerance limits"></svg>
+      <div class="tip" id="histTip"></div>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--blue)"></span>washers per class</span>
+      <span><span class="ln"></span>tolerance limits LSL, USL</span>
+      <span><span class="ln dash"></span>normal model with the batch mean and s</span>
+    </div>
+    <div class="note">A box of washers has no production order, so there are no rational subgroups and no control chart: what you compute is <b>process performance</b>, P<sub>p</sub> and P<sub>pk</sub> with the overall s (ISO 22514-2), not capability C<sub>p</sub>, C<sub>pk</sub>.</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-n">5</span>Decide, washer by washer</h2>
+    <p class="hint">Near a tolerance limit, the measurement uncertainty decides whether you can prove anything at all.</p>
+    <div class="seg" role="group" aria-label="Decision rule">
+      <button type="button" id="rSimple" aria-pressed="false">Simple acceptance</button>
+      <button type="button" id="rISO" aria-pressed="true">ISO 14253-1 default (95 %)</button>
+    </div>
+    <p class="hint" id="ruleText" style="margin-top:8px"></p>
+    <div class="row" id="pills" style="margin-top:4px"></div>
+    <div class="chart" id="stripBox" style="margin-top:10px">
+      <svg id="stripSvg" viewBox="0 0 760 260" role="img" aria-label="Every washer by group, against the tolerance and acceptance limits"></svg>
+      <div class="tip" id="stripTip"></div>
+    </div>
+    <div class="legend" id="stripLegend"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="ghost" id="btnCSV" type="button" disabled>Download the washer table (CSV)</button>
+    </div>
+    <div class="why"><b>Who must prove what?</b> ISO 14253-1 puts the burden of proof on whoever makes the claim. A supplier claiming conformity must show the value is inside the tolerance <i>reduced</i> by the guard band; a customer rejecting a part must show it is outside the tolerance <i>widened</i> by it. Washers in between can be neither accepted by the supplier nor rejected by the customer — that is the price of an imperfect gauge.</div>
+  </div>
+
+  <div class="card">
+    <h2>Your decision</h2>
+    <p>Write it as the customer's quality engineer would: <b>accept</b>, <b>reject</b>, or <b>accept with conditions</b> — in one paragraph, using P<sub>pk</sub>, the expected fraction out of tolerance, the decision counts and the gauge's own limits. Many customers require P<sub>pk</sub> ≥ 1.33 from their suppliers. A formal lot-acceptance plan by sampling would follow ISO 3951-1 (inspection by variables); here you have measured the whole sample you were given.</p>
+    <h3>Questions for your group</h3>
+    <ol class="q">
+      <li>Which characteristic can your camera gauge check — outer Ø, inner Ø, both, neither? Use the gauge-to-tolerance ratio, and say what you would need to improve it.</li>
+      <li>How much of the spread you see in the batch is the gauge itself? Compare the gauge's variance with the batch's.</li>
+      <li>Switch between simple acceptance and the ISO 14253-1 rule. Which washers change status? In each case, who carries the risk of a wrong decision — supplier or customer?</li>
+      <li>Look at the groups in the strip chart. Do they agree? What would a reproducibility study (ISO 5725-2, several groups measuring the <i>same</i> washers) tell you that this one cannot?</li>
+      <li>Your decision on the batch, and what you would ask the supplier.</li>
+    </ol>
+  </div>
+
+  <details>
+    <summary>Under the hood — the same analysis in Python</summary>
+    <div class="in">
+      <p class="hint" style="margin-top:0">For the curious: the notebook does this analysis with pandas, step by step, on the example data or on your class's CSV files. It runs on Google Colab — nothing to install (a free Google account is needed).</p>
+      <p><a class="btn" href="https://colab.research.google.com/github/LolloCappo/student-hub/blob/main/materials/quality-management/lab/notebooks/3-accept-or-reject.ipynb" target="_blank" rel="noopener">Open the notebook in Colab</a></p>
+<pre id="pyCode">import numpy as np, pandas as pd
+from scipy.stats import norm
+
+df = pd.read_csv("example-class.csv")
+df = df[df.master.astype(str).str.lower() != "true"]                  # masters were set by the caliper
+by = df.groupby(["group", "part"]).od_mm                              # one washer = group + part name
+
+s_r = np.sqrt((by.var() * (by.count() - 1)).sum() / (by.count() - 1).sum())   # pooled repeatability
+u   = np.sqrt(s_r**2 / by.count().median() + 0.012**2)                # + caliper; for a mean of n photos
+x   = by.mean()                                                       # one value per washer
+
+LSL, USL = 15.57, 16.00                                               # ISO 7089, M8, outer diameter
+m, s = x.mean(), x.std()
+print(f"6u/T = {6 * u / (USL - LSL):.0%}   Pp = {(USL - LSL) / (6 * s):.2f}   Ppk = {min(USL - m, m - LSL) / (3 * s):.2f}")
+print(f"expected out of tolerance: {1e6 * (norm.cdf(LSL, m, s) + norm.sf(USL, m, s)):.0f} ppm")
+
+g = 1.645 * u                                                         # ISO 14253-1: 95 % conformance probability
+status = np.where((x >= LSL + g) & (x <= USL - g), "conforming",
+         np.where((x < LSL - g) | (x > USL + g), "nonconforming", "cannot decide"))
+print(pd.Series(status).value_counts())</pre>
+      <button class="ghost" id="btnCopy" type="button">Copy code</button>
+    </div>
+  </details>
+
+  <div class="card std">
+    <b>Standards behind this exercise.</b> ISO 7089 — plain washers and their tolerances ·
+    ISO 14253-1 — decision rules for proving conformity or nonconformity ·
+    JCGM 100 (GUM) — uncertainty, U = 2u ·
+    ISO 5725-2 — repeatability and reproducibility ·
+    ISO 22514-2 — process capability and performance ·
+    ISO 13385-1 — callipers · ISO 3951-1 — sampling by variables.
+    The 10 % / 30 % gauge-to-tolerance guideline comes from the automotive MSA manual (AIAG), not from ISO.
+  </div>
+</main>
+
+<footer>Quality Management · BSc in Engineering Management · Università degli Studi di Perugia · Prof. G. Rossi, dr. L. Capponi</footer>
+
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+
+/* ISO 7089, product grade A: d1 (hole) and d2 (outside), limits in mm */
+const ISO7089 = {
+  M5: { d1: [5.30, 5.48], d2: [9.64, 10.00] },
+  M6: { d1: [6.40, 6.62], d2: [11.57, 12.00] },
+  M8: { d1: [8.40, 8.62], d2: [15.57, 16.00] },
+  M10: { d1: [10.50, 10.77], d2: [19.48, 20.00] },
+  M12: { d1: [13.00, 13.27], d2: [23.48, 24.00] },
+};
+const st = { rows: [], files: [], size: 'M8', ch: 'od', lsl: null, usl: null, rule: 'iso', res: null };
+
+/* ---------------- CSV ---------------- */
+function parseCSV(text) {
+  const out = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cell); cell = ''; if (row.some(v => v !== '')) out.push(row); row = []; }
+    else cell += c;
+  }
+  row.push(cell); if (row.some(v => v !== '')) out.push(row);
+  if (!out.length) return [];
+  const head = out[0].map(h => h.trim().toLowerCase());
+  return out.slice(1).map(r => Object.fromEntries(head.map((h, i) => [h, (r[i] || '').trim()])));
+}
+
+function addCSV(text, fname) {
+  const recs = parseCSV(text);
+  if (!recs.length || !('od_mm' in recs[0]) || !('part' in recs[0])) return `${fname}: not a gauge CSV (needs columns part, od_mm, id_mm).`;
+  const stem = fname.replace(/\.csv$/i, '');
+  for (const r of recs) {
+    const od = parseFloat(r.od_mm), id = parseFloat(r.id_mm);
+    if (isNaN(od) && isNaN(id)) continue;
+    st.rows.push({ group: r.group || stem, part: r.part, od: isNaN(od) ? null : od, id: isNaN(id) ? null : id, master: /^true$/i.test(r.master || '') });
+  }
+  return null;
+}
+
+$('#file').addEventListener('change', async (e) => {
+  const files = [...(e.target.files || [])]; if (!files.length) return;
+  st.rows = []; const errs = [];
+  for (const f of files) { const err = addCSV(await f.text(), f.name); if (err) errs.push(err); }
+  st.files = files.map(f => f.name);
+  e.target.value = '';
+  afterLoad(errs);
+});
+$('#btnDemo').addEventListener('click', () => {
+  const go = () => { st.rows = []; addCSV(window.EXAMPLE_CLASS_CSV, 'example-class.csv'); st.files = ['example class data']; afterLoad([]); };
+  if (window.EXAMPLE_CLASS_CSV) return go();
+  const s = document.createElement('script'); s.src = 'data/example-class.js'; s.onload = go;
+  s.onerror = () => setStatus('#loadStatus', 'The example data could not be loaded.', true);
+  document.head.appendChild(s);
+});
+function afterLoad(errs) {
+  const groups = new Set(st.rows.map(r => r.group));
+  const washers = new Set(st.rows.filter(r => !r.master).map(r => r.group + '/' + r.part));
+  setStatus('#loadStatus', (errs.length ? errs.join(' ') + ' ' : '') +
+    `<b>${st.rows.length} measurements</b> · ${groups.size} group${groups.size === 1 ? '' : 's'} · ${washers.size} washers (masters excluded).`, errs.length > 0, true);
+  $('#btnCSV').disabled = !washers.size;
+  analyse();
+}
+
+/* ---------------- specification ---------------- */
+const sizeSel = $('#size');
+sizeSel.innerHTML = Object.keys(ISO7089).map(k => `<option value="${k}" ${k === 'M8' ? 'selected' : ''}>${k} (ISO 7089)</option>`).join('') + '<option value="custom">custom</option>';
+sizeSel.addEventListener('change', () => { st.size = sizeSel.value; setSpec(); });
+$('#cOD').addEventListener('click', () => { st.ch = 'od'; press('#cOD', '#cID'); setSpec(); });
+$('#cID').addEventListener('click', () => { st.ch = 'id'; press('#cID', '#cOD'); setSpec(); });
+$('#lsl').addEventListener('input', () => { sizeSel.value = 'custom'; st.size = 'custom'; readSpec(); analyse(); });
+$('#usl').addEventListener('input', () => { sizeSel.value = 'custom'; st.size = 'custom'; readSpec(); analyse(); });
+$('#ucal').addEventListener('input', analyse);
+function press(on, off) { $(on).setAttribute('aria-pressed', 'true'); $(off).setAttribute('aria-pressed', 'false'); }
+function setSpec() {
+  if (st.size !== 'custom') {
+    const [l, u] = ISO7089[st.size][st.ch === 'od' ? 'd2' : 'd1'];
+    $('#lsl').value = l.toFixed(2); $('#usl').value = u.toFixed(2);
+  }
+  readSpec(); analyse();
+}
+function readSpec() {
+  st.lsl = parseFloat($('#lsl').value); st.usl = parseFloat($('#usl').value);
+  const ok = st.usl > st.lsl;
+  setStatus('#specStatus', ok ? `Tolerance T = USL − LSL = <b>${(st.usl - st.lsl).toFixed(2)} mm</b>` + (st.size !== 'custom' ? ` (${st.size}, ${st.ch === 'od' ? 'd2, outer' : 'd1, inner'} diameter).` : '.') : 'USL must be larger than LSL.', !ok, true);
+}
+
+/* ---------------- statistics ---------------- */
+function mean(a) { return a.reduce((s, v) => s + v, 0) / a.length; }
+function variance(a) { const m = mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); }
+function median(a) { const b = [...a].sort((x, y) => x - y); return b.length % 2 ? b[b.length >> 1] : (b[b.length / 2 - 1] + b[b.length / 2]) / 2; }
+function erf(x) { // Abramowitz & Stegun 7.1.26, |error| < 1.5e-7
+  const s = Math.sign(x); x = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * x);
+  return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x));
+}
+const Phi = (z) => 0.5 * (1 + erf(z / Math.SQRT2));
+
+function analyse() {
+  if (!st.rows.length || !(st.usl > st.lsl)) { st.res = null; drawAll(); return; }
+  const key = st.ch, ucal = Math.max(0, parseFloat($('#ucal').value) || 0);
+  const W = new Map();
+  for (const r of st.rows) {
+    if (r.master || r[key] == null) continue;
+    const k = r.group + '/' + r.part;
+    if (!W.has(k)) W.set(k, { group: r.group, part: r.part, vals: [] });
+    W.get(k).vals.push(r[key]);
+  }
+  const washers = [...W.values()];
+  if (!washers.length) { st.res = null; drawAll(); return; }
+  // pooled repeatability, overall and per group
+  const pool = (list) => { let num = 0, den = 0; for (const w of list) if (w.vals.length > 1) { num += variance(w.vals) * (w.vals.length - 1); den += w.vals.length - 1; } return den ? { s: Math.sqrt(num / den), dof: den } : null; };
+  const rep = pool(washers);
+  const nTyp = median(washers.map(w => w.vals.length));
+  const groups = [...new Set(washers.map(w => w.group))].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+  const perGroup = groups.map(g => { const l = washers.filter(w => w.group === g); return { g, n: l.length, photos: median(l.map(w => w.vals.length)), rep: pool(l) }; });
+  const uRep = rep ? rep.s / Math.sqrt(nTyp) : null;
+  const u = uRep != null ? Math.sqrt(uRep ** 2 + ucal ** 2) : null;
+  // batch
+  for (const w of washers) w.x = mean(w.vals);
+  const xs = washers.map(w => w.x), n = xs.length, m = mean(xs), s = n > 1 ? Math.sqrt(variance(xs)) : null;
+  const T = st.usl - st.lsl;
+  const pp = s ? T / (6 * s) : null, ppk = s ? Math.min(st.usl - m, m - st.lsl) / (3 * s) : null;
+  const pOut = s ? Phi((st.lsl - m) / s) + (1 - Phi((st.usl - m) / s)) : null;
+  // decisions
+  const g = st.rule === 'iso' && u != null ? 1.645 * u : 0;
+  for (const w of washers) {
+    if (w.x >= st.lsl + g && w.x <= st.usl - g) w.status = 'ok';
+    else if (w.x < st.lsl - g || w.x > st.usl + g) w.status = 'bad';
+    else w.status = 'warn';
+  }
+  st.res = { washers, groups, perGroup, rep, nTyp, uRep, ucal, u, U: u != null ? 2 * u : null, g, m, s, n, pp, ppk, pOut, T,
+             gaugeShare: s && uRep ? uRep ** 2 / s ** 2 : null };
+  drawAll();
+}
+
+/* ---------------- drawing ---------------- */
+const fmt = (v, d) => v == null || isNaN(v) ? '—' : v.toFixed(d);
+const fig = (k, v, s) => `<div class="fig"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+const STATUS = { ok: { word: 'conforming', sym: '✓', cls: 'ok' }, warn: { word: 'cannot be decided', sym: '?', cls: 'warn' }, bad: { word: 'nonconforming', sym: '✕', cls: 'bad' } };
+
+function drawAll() {
+  const r = st.res;
+  $('#ruleText').innerHTML = st.rule === 'iso'
+    ? `A washer is <b>proven conforming</b> only if the probability that it truly is within tolerance is at least 95 %: its value must lie at least <b>1.645 u</b> inside both limits (u: standard uncertainty of the value). It is <b>proven nonconforming</b> only if it lies at least 1.645 u outside.`
+    : `Every measured value inside the tolerance is accepted, everything outside rejected — as if the gauge were perfect. Simple, and common in practice; the risk of a wrong decision is simply not stated.`;
+  if (!r) {
+    $('#gaugeFigs').innerHTML = $('#batchFigs').innerHTML = $('#pills').innerHTML = $('#stripLegend').innerHTML = '';
+    $('#groupBody').innerHTML = '<tr><td colspan="4" class="hint">Load measurements first.</td></tr>';
+    setStatus('#gaugeStatus', ''); drawHist(); drawStrip(); return;
+  }
+  // gauge
+  const ratio = r.u != null ? 6 * r.u / r.T : null;
+  const verdict = ratio == null ? '' : ratio <= 0.10 ? 'good enough for this tolerance' : ratio <= 0.30 ? 'marginal for this tolerance' : 'not good enough for this tolerance';
+  $('#gaugeFigs').innerHTML =
+    fig('Repeatability s<sub>r</sub>', fmt(r.rep && r.rep.s * 1000, 1) + ' µm', `one photo · ${r.rep ? r.rep.dof : 0} degrees of freedom`) +
+    fig('Photos per washer', fmt(r.nTyp, 0), `the mean of ${fmt(r.nTyp, 0)} photos: s<sub>r</sub>/√${fmt(r.nTyp, 0)} = ${fmt(r.uRep && r.uRep * 1000, 1)} µm`) +
+    fig('Uncertainty u', fmt(r.u && r.u * 1000, 1) + ' µm', `√(${fmt(r.uRep && r.uRep * 1000, 1)}² + ${fmt(r.ucal * 1000, 1)}²) µm, repeatability and caliper`) +
+    fig('Expanded U = 2u', fmt(r.U && r.U * 1000, 0) + ' µm', 'about 95 % coverage (GUM, k = 2)') +
+    fig('Gauge-to-tolerance 6u/T', fmt(ratio && ratio * 100, 0) + ' %', verdict);
+  $('#groupBody').innerHTML = r.perGroup.map(p => `<tr><td>${esc(p.g)}</td><td class="num">${p.n}</td><td class="num">${fmt(p.photos, 0)}</td><td class="num">${p.rep ? fmt(p.rep.s, 4) : '— (one photo only)'}</td></tr>`).join('');
+  setStatus('#gaugeStatus', r.rep ? `Guideline (AIAG MSA): 6u/T up to 10 % good, 10–30 % marginal, above 30 % not adequate. Here: <b>${verdict}</b>.` : 'Each washer needs at least two photos to estimate repeatability.', !r.rep || ratio > 0.3, true);
+  // batch
+  $('#batchFigs').innerHTML =
+    fig('Washers', r.n, `${r.groups.length} group${r.groups.length === 1 ? '' : 's'}`) +
+    fig('Mean', fmt(r.m, 3) + ' mm', `nominal limits ${fmt(st.lsl, 2)}–${fmt(st.usl, 2)}`) +
+    fig('Standard deviation s', fmt(r.s && r.s * 1000, 1) + ' µm', r.gaugeShare != null ? `${fmt(r.gaugeShare * 100, 0)} % of its variance is the gauge` : 'between washers') +
+    fig('P<sub>p</sub>', fmt(r.pp, 2), 'tolerance / 6s') +
+    fig('P<sub>pk</sub>', fmt(r.ppk, 2), 'distance to nearest limit / 3s') +
+    fig('Expected out of tolerance', r.pOut == null ? '—' : r.pOut * 1e6 < 1 ? '< 1 ppm' : fmt(r.pOut * 1e6, 0) + ' ppm', 'normal model, both tails');
+  // decision pills
+  const cnt = { ok: 0, warn: 0, bad: 0 }; r.washers.forEach(w => cnt[w.status]++);
+  $('#pills').innerHTML = ['ok', 'warn', 'bad'].map(k => `<span class="pill ${STATUS[k].cls}">${STATUS[k].sym} ${cnt[k]} ${STATUS[k].word}</span>`).join('') +
+    (st.rule === 'iso' && r.u != null ? `<span class="hint" style="margin:0">guard band g = 1.645 u = ${fmt(r.g * 1000, 0)} µm on each side</span>` : '');
+  $('#stripLegend').innerHTML = ['ok', 'warn', 'bad'].map(k => `<span><span class="st-${k}" style="font-weight:700">${STATUS[k].sym}</span> ${STATUS[k].word}</span>`).join('') +
+    `<span><span class="ln"></span>tolerance limits</span>` + (st.rule === 'iso' ? `<span><span class="sw" style="background:var(--warn-weak);border:1px solid #e9c48a"></span>guard band</span>` : '');
+  drawHist(); drawStrip();
+}
+
+function axis(lo, hi, x0, x1) {
+  const span = hi - lo, raw = span / 6, p = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 2.5, 5, 10].map(f => f * p).find(v => v >= raw);
+  const ticks = []; for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) ticks.push(+v.toFixed(6));
+  return { X: (v) => x0 + (v - lo) / (hi - lo) * (x1 - x0), ticks, dec: Math.max(0, -Math.floor(Math.log10(step) + 1e-9)) };
+}
+function range(r) {
+  const vals = r.washers.map(w => w.x).concat([st.lsl, st.usl]);
+  const lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo) * 0.08;
+  return [lo - pad, hi + pad];
+}
+
+function drawHist() {
+  const svg = $('#histSvg'), r = st.res, Wd = 760, Hd = 240, L = 40, R = 16, T = 18, B = 36;
+  if (!r) { svg.innerHTML = `<text x="${Wd / 2}" y="${Hd / 2}" text-anchor="middle" font-size="13" fill="#6b7280">Load measurements to see the histogram.</text>`; return; }
+  const [lo, hi] = range(r), ax = axis(lo, hi, L, Wd - R);
+  const k = Math.max(5, Math.min(20, Math.round(Math.sqrt(r.n)))), bw = (hi - lo) / k;
+  const counts = new Array(k).fill(0); r.washers.forEach(w => counts[Math.min(k - 1, Math.floor((w.x - lo) / bw))]++);
+  const peak = r.s ? r.n * bw / (r.s * Math.sqrt(2 * Math.PI)) : 0;     // top of the normal model
+  const cmax = Math.max(...counts, 1), ymax = Math.max(cmax, peak) * 1.05, Y = (c) => Hd - B - c / ymax * (Hd - T - B);
+  let s = '';
+  for (let c = 0; c <= ymax; c += Math.max(1, Math.ceil(ymax / 4))) s +=`<line x1="${L}" x2="${Wd - R}" y1="${Y(c)}" y2="${Y(c)}" stroke="#eceff4"/><text x="${L - 6}" y="${Y(c) + 4}" font-size="11" text-anchor="end" fill="#6b7280">${c}</text>`;
+  ax.ticks.forEach(v => s += `<text x="${ax.X(v)}" y="${Hd - B + 16}" font-size="11" text-anchor="middle" fill="#6b7280">${v.toFixed(ax.dec)}</text>`);
+  s += `<text x="${(L + Wd - R) / 2}" y="${Hd - 4}" font-size="12" text-anchor="middle" fill="#444b57">${st.ch === 'od' ? 'outer' : 'inner'} diameter (mm), mean of the photos of each washer</text>`;
+  counts.forEach((c, i) => {
+    if (!c) return;
+    const x = ax.X(lo + i * bw) + 1, w = ax.X(lo + (i + 1) * bw) - ax.X(lo + i * bw) - 2, y = Y(c), h = Hd - B - y;
+    s += `<path d="M${x} ${Hd - B}V${y + 3}q0 -3 3 -3h${w - 6}q3 0 3 3V${Hd - B}Z" fill="#2B4D9A"/>`;
+    s += `<rect class="hit" data-i="${i}" x="${x}" y="${T}" width="${w}" height="${Hd - B - T}" fill="transparent"/>`;
+  });
+  if (r.s) { // normal model scaled to the counts
+    let d = ''; for (let j = 0; j <= 120; j++) { const v = lo + (hi - lo) * j / 120, f = r.n * bw * Math.exp(-0.5 * ((v - r.m) / r.s) ** 2) / (r.s * Math.sqrt(2 * Math.PI)); d += (j ? 'L' : 'M') + ax.X(v).toFixed(1) + ' ' + Math.max(T, Y(f)).toFixed(1); }
+    s += `<path d="${d}" fill="none" stroke="#15181e" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  }
+  for (const [v, lab] of [[st.lsl, 'LSL'], [st.usl, 'USL']]) s += `<line x1="${ax.X(v)}" x2="${ax.X(v)}" y1="${T - 6}" y2="${Hd - B}" stroke="#15181e" stroke-width="2"/><text x="${ax.X(v)}" y="${T - 9}" font-size="12" font-weight="700" text-anchor="middle" fill="#15181e">${lab} ${v.toFixed(2)}</text>`;
+  s += `<line x1="${L}" x2="${Wd - R}" y1="${Hd - B}" y2="${Hd - B}" stroke="#9aa3b2"/>`;
+  svg.innerHTML = s;
+  const tip = $('#histTip');
+  svg.querySelectorAll('.hit').forEach(h => {
+    h.addEventListener('mouseenter', () => {
+      const i = +h.dataset.i, rr = svg.getBoundingClientRect();
+      tip.style.display = 'block'; tip.style.left = ((+h.getAttribute('x') + +h.getAttribute('width') / 2) * rr.width / Wd) + 'px'; tip.style.top = (Y(counts[i]) * rr.height / Hd) + 'px';
+      tip.textContent = `${(lo + i * bw).toFixed(3)}–${(lo + (i + 1) * bw).toFixed(3)} mm: ${counts[i]} washer${counts[i] === 1 ? '' : 's'}`;
+    });
+    h.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  });
+}
+
+function drawStrip() {
+  const svg = $('#stripSvg'), r = st.res, Wd = 760, L = 54, R = 16, T = 22, B = 34;
+  if (!r) { svg.setAttribute('viewBox', `0 0 ${Wd} 120`); svg.innerHTML = `<text x="${Wd / 2}" y="60" text-anchor="middle" font-size="13" fill="#6b7280">Load measurements to see every washer.</text>`; return; }
+  const lane = 30, Hd = T + B + lane * r.groups.length; svg.setAttribute('viewBox', `0 0 ${Wd} ${Hd}`);
+  const [lo, hi] = range(r), ax = axis(lo, hi, L, Wd - R);
+  let s = '';
+  if (st.rule === 'iso' && r.g > 0) {
+    for (const [a, b] of [[st.lsl - r.g, st.lsl + r.g], [st.usl - r.g, st.usl + r.g]]) {
+      const x0 = Math.max(L, ax.X(a)), x1 = Math.min(Wd - R, ax.X(b));
+      if (x1 > x0) s += `<rect x="${x0}" y="${T}" width="${x1 - x0}" height="${Hd - T - B}" fill="#fff3df"/>`;
+    }
+  }
+  r.groups.forEach((g, i) => { const y = T + lane * (i + 0.5); s += `<line x1="${L}" x2="${Wd - R}" y1="${y}" y2="${y}" stroke="#eceff4"/><text x="${L - 8}" y="${y + 4}" font-size="12" text-anchor="end" fill="#444b57">${esc(g)}</text>`; });
+  ax.ticks.forEach(v => s += `<text x="${ax.X(v)}" y="${Hd - B + 16}" font-size="11" text-anchor="middle" fill="#6b7280">${v.toFixed(ax.dec)}</text>`);
+  s += `<text x="${(L + Wd - R) / 2}" y="${Hd - 4}" font-size="12" text-anchor="middle" fill="#444b57">${st.ch === 'od' ? 'outer' : 'inner'} diameter (mm)</text>`;
+  for (const [v, lab] of [[st.lsl, 'LSL'], [st.usl, 'USL']]) s += `<line x1="${ax.X(v)}" x2="${ax.X(v)}" y1="${T - 4}" y2="${Hd - B}" stroke="#15181e" stroke-width="2"/><text x="${ax.X(v)}" y="${T - 8}" font-size="12" font-weight="700" text-anchor="middle" fill="#15181e">${lab}</text>`;
+  const col = { ok: '#1f7a3a', warn: '#a15c00', bad: '#b42318' };
+  r.washers.forEach((w, j) => {
+    const gi = r.groups.indexOf(w.group), x = ax.X(w.x);
+    const y = T + lane * (gi + 0.5) + ((j * 7919) % 11 - 5) * 1.1;        // small fixed jitter against overlap
+    if (w.status === 'ok') s += `<circle cx="${x}" cy="${y}" r="5" fill="${col.ok}" stroke="#fff" stroke-width="1.5"/>`;
+    else if (w.status === 'warn') s += `<path d="M${x} ${y - 7}L${x + 7} ${y}L${x} ${y + 7}L${x - 7} ${y}Z" fill="${col.warn}" stroke="#fff" stroke-width="1.5"/>`;
+    else s += `<path d="M${x - 6} ${y - 6}L${x + 6} ${y + 6}M${x + 6} ${y - 6}L${x - 6} ${y + 6}" stroke="${col.bad}" stroke-width="3" stroke-linecap="round"/>`;
+    s += `<circle class="hit" data-j="${j}" cx="${x}" cy="${y}" r="10" fill="transparent"/>`;
+  });
+  svg.innerHTML = s;
+  const tip = $('#stripTip');
+  svg.querySelectorAll('.hit').forEach(h => {
+    h.addEventListener('mouseenter', () => {
+      const w = r.washers[+h.dataset.j], rr = svg.getBoundingClientRect();
+      tip.style.display = 'block'; tip.style.left = (+h.getAttribute('cx') * rr.width / Wd) + 'px'; tip.style.top = (+h.getAttribute('cy') * rr.height / Hd) + 'px';
+      tip.textContent = `${w.group} · washer ${w.part}: ${w.x.toFixed(3)} mm (${w.vals.length} photo${w.vals.length === 1 ? '' : 's'}) — ${STATUS[w.status].word}`;
+    });
+    h.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  });
+}
+
+/* ---------------- rule, export, misc ---------------- */
+$('#rSimple').addEventListener('click', () => { st.rule = 'simple'; press('#rSimple', '#rISO'); analyse(); });
+$('#rISO').addEventListener('click', () => { st.rule = 'iso'; press('#rISO', '#rSimple'); analyse(); });
+$('#btnCSV').addEventListener('click', () => {
+  const r = st.res; if (!r) return;
+  const lines = ['group,part,photos,value_mm,characteristic,status,rule,LSL,USL,u_mm,guard_band_mm'];
+  r.washers.forEach(w => lines.push([w.group, w.part, w.vals.length, w.x.toFixed(4), st.ch === 'od' ? 'outer' : 'inner', STATUS[w.status].word, st.rule === 'iso' ? 'ISO 14253-1 95%' : 'simple', st.lsl, st.usl, r.u != null ? r.u.toFixed(4) : '', r.g.toFixed(4)].map(v => /[",]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v).join(',')));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' }));
+  a.download = `batch-decision-${st.ch}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$('#btnCopy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('#pyCode').textContent); $('#btnCopy').textContent = 'Copied'; }
+  catch (e) { $('#btnCopy').textContent = 'Select the code and copy it'; }
+  setTimeout(() => { $('#btnCopy').textContent = 'Copy code'; }, 1800);
+});
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function setStatus(sel, msg, warn, html) { const el = $(sel); el.classList.toggle('warn', !!warn); if (html) el.innerHTML = msg; else el.textContent = msg; }
+
+setSpec();
+
+/* self-test: ?autotest loads the example and reports the key figures for both diameters */
+if (/[?&]autotest\b/.test(location.search)) {
+  $('#btnDemo').click();
+  const wait = setInterval(() => {
+    if (!st.res) return; clearInterval(wait);
+    const pick = (r) => ({ n: r.n, s_r: +r.rep.s.toFixed(5), u: +r.u.toFixed(5), ratio: +(6 * r.u / r.T).toFixed(3), mean: +r.m.toFixed(4), s: +r.s.toFixed(5), pp: +r.pp.toFixed(3), ppk: +r.ppk.toFixed(3), ppm: Math.round(r.pOut * 1e6), counts: ['ok', 'warn', 'bad'].map(k => r.washers.filter(w => w.status === k).length) });
+    const out = { od: pick(st.res) };
+    $('#cID').click(); out.id = pick(st.res);
+    st.rule = 'simple'; analyse(); out.idSimple = pick(st.res).counts;
+    st.rule = 'iso'; analyse();
+    const pre = document.createElement('pre'); pre.id = 'AUTOTEST'; pre.textContent = 'AUTOTEST ' + JSON.stringify(out); document.body.appendChild(pre);
+  }, 100);
+}
+</script>
+</body>
+</html>
