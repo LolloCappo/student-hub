@@ -20,32 +20,34 @@ No prerequisites.
 
 ## Schedule
 
-| # | Date | Room | Topic |
-|---:|---|:---:|---|
-| 1 | Mon 21 Sep | 3 | Introduction to the course · community framework and regulations (1/2) ✅ |
-| 2 | Thu 24 Sep | 2 | Regulations · quality and reliability · certification (2/2) |
-| 3 | Mon 28 Sep | 3 | History of quality management |
-| 4 | Thu 1 Oct | 2 | Quality systems and quality management |
-| 5 | Mon 5 Oct | 3 | ISO 9000 (1/2) |
-| 6 | Thu 8 Oct | 2 | ISO 9000 (2/2) |
-| 7 | Mon 12 Oct | 3 | Accreditation and certification |
-| 8 | Thu 15 Oct | 2 | **Guest seminar 1** |
-| 9 | Mon 19 Oct | 3 | Reliability (1/2) |
-| 10 | Thu 22 Oct | 2 | Reliability (2/2) |
-| 11 | Mon 26 Oct | 3 | Statistical tools for quality management (1/2) |
-| 12 | Thu 29 Oct | 2 | Statistical tools for quality management (2/2) |
-| 13 | Mon 2 Nov | 3 | Image formation |
-| 14 | Thu 5 Nov | 2 | **Guest seminar 2** |
-| 15 | Mon 9 Nov | 3 | Image processing — hands-on |
-| 16 | Thu 12 Nov | 2 | Camera sensors |
-| 17 | Mon 16 Nov | 3 | Light and illumination · dimensional measurements |
-| 18 | Thu 19 Nov | 2 | Interest points |
-| 19 | Mon 23 Nov | 3 | 3D optical shape measurement |
-| 20 | Thu 26 Nov | 2 | **Guest seminar 3** |
-| 21 | Mon 30 Nov | 3 | CMM · sonar, radar and lidar |
-| 22 | Thu 3 Dec | 2 | Tomography · synthesis and exam preparation |
+| # | Date | Room | Topic | Lecturer |
+|---:|---|:---:|---|---|
+| 1 | Mon 21 Sep | 3 | Introduction and the European framework · standards, certification and liability ✅ | |
+| 2 | Thu 24 Sep | 2 | History and evolution of quality management ✅ | |
+| 3 | Mon 28 Sep | 3 | Quality systems and the cost of quality · ISO 9000 and ISO 9001 ✅ | |
+| 4 | Thu 1 Oct | 2 | Reliability (1/2) ✅ | |
+| 5 | Mon 5 Oct | 3 | Reliability (2/2) ✅ | |
+| 6 | Thu 8 Oct | 2 | The seven statistical tools of quality | Capponi |
+| 7 | Mon 12 Oct | 3 | Analog image formation | Rossi |
+| 8 | Thu 15 Oct | 2 | Digital images and digitisation | Capponi |
+| 9 | Mon 19 Oct | 3 | Camera sensors | Capponi |
+| 10 | Thu 22 Oct | 2 | Light and illumination | Rossi |
+| 11 | Mon 26 Oct | 3 | **Guest seminar** — Maria Brizi, TUCEP | guest |
+| 12 | Thu 29 Oct | 2 | **Guest seminar** — Silvia Polidori, Metalcom | guest |
+| 13 | Mon 2 Nov | 3 | Interest points | Rossi |
+| 14 | Thu 5 Nov | 2 | 3D optical shape measurement | Capponi |
+| 15 | Mon 9 Nov | 3 | CMM · sonar, radar and lidar | Rossi |
+| 16 | Thu 12 Nov | 2 | **Guest seminar** — Elica | guest |
+| 17 | Mon 16 Nov | 3 | *to be defined* | |
+| 18 | Thu 19 Nov | 2 | *to be defined* | |
+| 19 | Mon 23 Nov | 3 | *to be defined* | |
+| 20 | Thu 26 Nov | 2 | *to be defined* | |
+| 21 | Mon 30 Nov | 3 | *to be defined* | |
+| 22 | Thu 3 Dec | 2 | *to be defined* | |
 
 ✅ delivered &nbsp;·&nbsp; 22 sessions, 55 hours against the 54 of the credit allocation.
+
+Sessions 17–22 will hold two more lectures, two more guest seminars and practical sessions. They are filled in here as they are fixed.
 
 ### Reserve dates
 
@@ -55,27 +57,29 @@ Four further slots are held in case a lecture has to be moved. They are used onl
 
 ## Guest seminars
 
-Three sessions are given by speakers from industry and from the national metrology system. What they present is part of the course and is examinable — and it is the clearest view you will get of how the rest of this material is used in practice.
+Five sessions are given by guest speakers from outside the university. What they present is part of the course and is examinable — and it is the clearest view you will get of how the rest of this material is used in practice.
 
-| | Date | Speaker | Affiliation |
+| | Date | Speaker | Organisation |
 |---:|---|---|---|
-| 1 | Thu 15 Oct | *to be announced* | *to be announced* |
-| 2 | Thu 5 Nov | *to be announced* | *to be announced* |
-| 3 | Thu 26 Nov | *to be announced* | *to be announced* |
+| 1 | Mon 26 Oct | Maria Brizi | TUCEP |
+| 2 | Thu 29 Oct | Silvia Polidori | Metalcom |
+| 3 | Thu 12 Nov | *to be announced* | Elica |
+| 4 | *to be fixed* | *to be announced* | *to be announced* |
+| 5 | *to be fixed* | *to be announced* | *to be announced* |
 
-Speakers are confirmed a few weeks ahead; this table is updated as each is fixed.
+This table is updated as each seminar is fixed.
 
 ## Materials
 
 Slides are published here after each lecture.
 
-| | Lecture | Session |
-|---:|---|---|
-| 1 | [Introduction and the European framework](lec01-introduction.pdf) | Mon 21 Sep |
-| 2 | [Standards, quality, certification and liability](lec02-standards.pdf) | Thu 24 Sep |
-| 3 | [History and evolution of quality management](lec03-history.pdf) | Mon 28 Sep |
-| 4 | [What quality is, what it costs, how you organise for it](lec04-quality-and-costs.pdf) | Thu 1 Oct |
-| 5 | [ISO 9000 and ISO 9001](lec05-iso9000.pdf) | Mon 5 Oct |
+| | Slides |
+|---:|---|
+| 1 | [Introduction and the European framework](lec01-introduction.pdf) |
+| 2 | [Standards, quality, certification and liability](lec02-standards.pdf) |
+| 3 | [History and evolution of quality management](lec03-history.pdf) |
+| 4 | [What quality is, what it costs, how you organise for it](lec04-quality-and-costs.pdf) |
+| 5 | [ISO 9000 and ISO 9001](lec05-iso9000.pdf) |
 
 - [`hands_on/`](.) — notebooks for the image processing session: image manipulation, FFT, filtering and compression
 
