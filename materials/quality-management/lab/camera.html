@@ -51,7 +51,7 @@
 
     <!-- ======== steps ======== -->
     <section>
-      <div class="card">
+      <div class="card" id="step1">
         <h2><span class="step-n">1</span>Load a photo</h2>
         <p class="hint">Anything works. Best: a sheet of white paper next to something colourful, in good light — then the same scene in a dim corner.</p>
         <div class="row">
@@ -63,15 +63,15 @@
         <div class="figs" id="sizeFigs" hidden></div>
       </div>
 
-      <div class="card">
+      <div class="card" id="step2">
         <h2><span class="step-n">2</span>A photo is a grid of numbers</h2>
         <p class="hint">Move the mouse over the photo, or tap it. The magnifier shows the pixels and the numbers stored for the one in the middle.</p>
         <div class="why"><b>Why it matters.</b> Every measurement in Exercise 2 is arithmetic on these numbers. The file you saved is <b>compressed</b> (JPEG, ISO/IEC 10918-1): look at the ratio in step 1. JPEG throws away detail the eye does not miss — but a measurement might.</div>
       </div>
 
-      <div class="card">
+      <div class="card" id="step3">
         <h2><span class="step-n">3</span>Three colour channels — and a secret</h2>
-        <p class="hint">Each colour channel is a grey image of its own. Show them one at a time.</p>
+        <p class="hint">Each colour channel is a grey image of its own. Show them one at a time — in Exercise 2 you choose the one to measure in.</p>
         <div class="seg" role="group" aria-label="Channel">
           <button type="button" data-ch="colour" aria-pressed="true">Colour</button>
           <button type="button" data-ch="r" aria-pressed="false">Red</button>
@@ -88,7 +88,7 @@
         <p class="hint">Grey = 0.299 R + 0.587 G + 0.114 B (ITU-R BT.601): green counts most, because the eye — and the sensor — have most green.</p>
       </div>
 
-      <div class="card">
+      <div class="card" id="step4">
         <h2><span class="step-n">4</span>How many grey levels?</h2>
         <p class="hint">Your photo stores 8 bits per channel: 2⁸ = 256 levels. Take bits away and watch the grey ramp.</p>
         <div class="row"><span>Bits per pixel <span class="value" id="bitsVal">8</span> → <span class="value" id="levelsVal">256</span> grey levels, one step = <span class="value" id="stepVal">1</span></span></div>
@@ -96,7 +96,7 @@
         <div class="why"><b>Why it matters.</b> A smooth ramp breaks into visible bands when the steps get coarse. The threshold you will set in Exercise 2 is the extreme case: <b>1 bit</b>, part or background.</div>
       </div>
 
-      <div class="card">
+      <div class="card" id="step5">
         <h2><span class="step-n">5</span>Resolution: what is too fine to record</h2>
         <p class="hint">Keep only one pixel in <i>n</i> along each direction — a camera with fewer, bigger pixels. Look at the centre of the Siemens star.</p>
         <div class="row">
@@ -107,10 +107,10 @@
           </div>
         </div>
         <input type="range" id="samp" min="1" max="12" value="1" disabled aria-label="Sampling factor">
-        <div class="why"><b>Why it matters.</b> Detail finer than two pixels cannot be recorded. With <i>pick</i> it does not simply vanish: it comes back as false rings and stripes (<b>aliasing</b>, moiré) that look like real detail. <i>Average</i> blurs it instead — lost, but honest. That is why cameras put a slight blur, an optical low-pass filter, in front of the sensor.</div>
+        <div class="why"><b>Why it matters.</b> Detail finer than two pixels cannot be recorded. With <i>pick</i> it does not simply vanish: it comes back as false rings and stripes (<b>aliasing</b>, moiré) that look like real detail. <i>Average</i> blurs it instead — lost, but honest. That is why cameras put a slight blur, an optical low-pass filter, in front of the sensor. In Exercise 2 you will see that blur at the edge of every washer, and the pixel size becomes micrometres on the part.</div>
       </div>
 
-      <div class="card">
+      <div class="card" id="step6">
         <h2><span class="step-n">6</span>Noise: the camera disagrees with itself</h2>
         <p class="hint">Drag a box over an area that should be perfectly uniform — white paper. On the test chart, use the buttons.</p>
         <div class="row" id="presetRow" hidden>
@@ -148,6 +148,12 @@
       <li>On the star, the spokes are 2πr / 36 pixels apart at radius r. Predict the radius below which keeping 1 pixel in 4 must fail, then check it. Repeat for 1 in 8.</li>
       <li>Measure the SNR of white paper in good light and in a dim corner. Explain the difference: photon noise, and the gain (ISO setting) the phone chose. Why does averaging stop following 1/√N?</li>
     </ol>
+  </div>
+
+  <div class="card">
+    <h2>Next: put it to work</h2>
+    <p style="margin-top:4px">Exercise 2 turns these numbers into millimetres. You will choose the colour channel to measure in (step 3), set a threshold that makes a 1-bit image (step 4), read how many micrometres one pixel is on the washer (step 5), and see why a diameter computed from hundreds of thousands of pixels is far finer than one pixel (step 6). If you measured the noise of your own photo in step 6, Exercise 2 will show it again.</p>
+    <a class="btn" href="gauge.html">Go to Exercise 2 — build a camera gauge</a>
   </div>
 
   <details>
@@ -391,6 +397,10 @@ function drawNoise() {
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) g[y * w + x] = grey[(y0 + y) * W + x0 + x];
   const gd = detrend(g, w, h);
   rows.push(['Grey', sd(gd)]);
+  if (!st.regions) {   // only for the student's own photo: Exercise 2 shows it again
+    const g = rows[3][1];
+    try { localStorage.setItem('qm-lab-ex1', JSON.stringify({ noise: g.sd, level: g.mean, snr: g.mean / g.sd, source: 'your photo, ' + new Date().toLocaleDateString('en-GB') })); } catch (e) {}
+  }
   tb.innerHTML = rows.map(([n, s]) => `<tr><td>${n}</td><td class="num">${s.mean.toFixed(1)}</td><td class="num">${s.sd.toFixed(2)}</td><td class="num">${s.sd > 0 ? Math.round(s.mean / s.sd) : '—'}</td></tr>`).join('');
   // noise of block averages
   const pts = [];
