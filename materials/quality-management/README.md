@@ -75,14 +75,14 @@ Slides are published here after each lecture.
 
 | | Slides |
 |---:|---|
-| 1 | [Introduction and the European framework](lec01-introduction.pdf) |
-| 2 | [Standards, quality, certification and liability](lec02-standards.pdf) |
-| 3 | [History and evolution of quality management](lec03-history.pdf) |
-| 4 | [What quality is, what it costs, how you organise for it](lec04-quality-and-costs.pdf) |
-| 5 | [ISO 9000 and ISO 9001](lec05-iso9000.pdf) |
+| 1 | [Introduction and the European framework](lectures/lec01-introduction.pdf) |
+| 2 | [Standards, quality, certification and liability](lectures/lec02-standards.pdf) |
+| 3 | [History and evolution of quality management](lectures/lec03-history.pdf) |
+| 4 | [What quality is, what it costs, how you organise for it](lectures/lec04-quality-and-costs.pdf) |
+| 5 | [ISO 9000 and ISO 9001](lectures/lec05-iso9000.pdf) |
 
 - **[Hands-on lab](https://lollocappo.github.io/student-hub/materials/quality-management/lab/)** — *can a phone camera inspect a batch of washers?* Three exercises that run in the browser, each with an optional Python notebook on Colab ([source](lab/))
-- Notebooks from last year: image manipulation, FFT, filtering and compression
+- [Notebooks from last year](notebooks-2025-26/): image manipulation, FFT, filtering and compression
 
 Reference text: *Juran's Quality Control Handbook*, alongside your own notes and the slides.
 
