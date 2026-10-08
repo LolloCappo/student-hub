@@ -22,11 +22,11 @@ No prerequisites.
 
 | # | Date | Room | Topic | Lecturer |
 |---:|---|:---:|---|---|
-| 1 | Mon 21 Sep | 3 | Introduction and the European framework · standards, certification and liability ✅ | |
-| 2 | Thu 24 Sep | 2 | History and evolution of quality management ✅ | |
-| 3 | Mon 28 Sep | 3 | Quality systems and the cost of quality · ISO 9000 and ISO 9001 ✅ | |
-| 4 | Thu 1 Oct | 2 | Reliability (1/2) ✅ | |
-| 5 | Mon 5 Oct | 3 | Reliability (2/2) ✅ | |
+| 1 | Mon 21 Sep | 3 | Introduction and the European framework · standards, certification and liability ✅ | Rossi |
+| 2 | Thu 24 Sep | 2 | History and evolution of quality management ✅ | Rossi |
+| 3 | Mon 28 Sep | 3 | Quality systems and the cost of quality · ISO 9000 and ISO 9001 ✅ | Rossi |
+| 4 | Thu 1 Oct | 2 | Reliability (1/2) ✅ | Rossi |
+| 5 | Mon 5 Oct | 3 | Reliability (2/2) ✅ | Rossi |
 | 6 | Thu 8 Oct | 2 | The seven statistical tools of quality | Capponi |
 | 7 | Mon 12 Oct | 3 | Analog image formation | Rossi |
 | 8 | Thu 15 Oct | 2 | Digital images and digitisation | Capponi |
