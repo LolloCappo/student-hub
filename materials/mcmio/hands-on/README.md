@@ -64,4 +64,4 @@ Used by nearly everything below.
 
 ---
 
-Something here refuses to install, or you think a tool is missing? Open an [issue](../../../../issues).
+Something here refuses to install, or you think a tool is missing? Open an [issue](../../../../../issues).

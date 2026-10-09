@@ -23,10 +23,10 @@ Project work and laboratory experiences are shorter, self-contained pieces tied 
 
 - **Misure di Campi Meccanici con Immagini e Onde** — Ingegneria Meccanica (LM-33), Perugia · 6 CFU, 48 h · 2nd year, 2nd semester · taught in English
   Waves and optical systems, 2D/3D shape measurement, motion and deformation fields, thermography, scanning vibrometry, PIV and acoustic imaging.
-  Software and tools: [`materials/MCMIO`](materials/MCMIO)
+  Lectures and hands-on: [`materials/mcmio`](materials/mcmio)
 - **Quality Management** — Engineering Management (L-8), Perugia · 6 CFU, 54 h · 3rd year, 1st semester · taught in English
   Quality standards and ISO 9000, accreditation and certification, and measurement techniques for quality control in industrial production.
-  Hands-on notebooks: [`materials/quality-management`](materials/quality-management)
+  Lectures and hands-on: [`materials/quality-management`](materials/quality-management)
 
 If you're taking either course and want project work or a lab experience in it, see the open topics below or just ask.
 
@@ -57,11 +57,11 @@ Open a [topic proposal](../../issues/new?template=propose-topic.yml). If it's cl
 
 ## Templates
 
-Use these from the start, not in the last month. They drop straight into [Overleaf](https://www.overleaf.com/) if you'd rather not install a TeX distribution.
+All three live in [`materials/thesis`](materials/thesis). Use them from the start, not in the last month. They drop straight into [Overleaf](https://www.overleaf.com/) if you'd rather not install a TeX distribution.
 
-- [`templates/thesis`](templates/thesis) — thesis template for BSc, MSc and PhD, with a [writing guide](templates/thesis/README.md) explaining what goes in each chapter
-- [`templates/lab-report`](templates/lab-report) — lab and project reports
-- [`templates/presentation`](templates/presentation) — Beamer slides for your defence
+- [`materials/thesis/thesis`](materials/thesis/thesis) — thesis template for BSc, MSc and PhD, with a [writing guide](materials/thesis/thesis/README.md) explaining what goes in each chapter
+- [`materials/thesis/lab-report`](materials/thesis/lab-report) — lab and project reports
+- [`materials/thesis/presentation`](materials/thesis/presentation) — Beamer slides for your defence
 
 ## Before you start
 

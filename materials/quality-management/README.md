@@ -81,8 +81,8 @@ Slides are published here after each lecture.
 | 4 | [What quality is, what it costs, how you organise for it](lectures/lec04-quality-and-costs.pdf) |
 | 5 | [ISO 9000 and ISO 9001](lectures/lec05-iso9000.pdf) |
 
-- **[Hands-on lab](https://lollocappo.github.io/student-hub/materials/quality-management/lab/)** — *can a phone camera inspect a batch of washers?* Three exercises that run in the browser, each with an optional Python notebook on Colab ([source](lab/))
-- [Notebooks from last year](notebooks-2025-26/): image manipulation, FFT, filtering and compression
+- **[Hands-on lab](https://lollocappo.github.io/student-hub/materials/quality-management/hands-on/)** — *can a phone camera inspect a batch of washers?* Three exercises that run in the browser, each with an optional Python notebook on Colab ([source](hands-on/))
+- [Notebooks from last year](hands-on/2025-26/): image manipulation, FFT, filtering and compression
 
 Reference text: *Juran's Quality Control Handbook*, alongside your own notes and the slides.
 
