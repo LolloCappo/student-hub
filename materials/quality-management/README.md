@@ -88,6 +88,12 @@ Reference text: *Juran's Quality Control Handbook*, alongside your own notes and
 
 You will need Python for the hands-on session — see [getting-started.md](../../getting-started.md) for the setup.
 
+## Internship projects
+
+- **[How well does a camera measure displacement?](internships/pyidi-displacement/)** — two students, one method each: Simplified Optical Flow and Lucas–Kanade in pyIDI, studied on synthetic images with a known displacement, then on real measurements.
+
+All projects: [`internships`](internships/).
+
 ## Exam
 
 Oral examination.
