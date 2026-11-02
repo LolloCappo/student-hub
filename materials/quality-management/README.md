@@ -36,9 +36,9 @@ No prerequisites.
 | 12 | Thu 29 Oct | 2 | **Guest seminar** — Silvia Polidori, Metalcom | guest |
 | 13 | Mon 2 Nov | 3 | Interest points | Rossi |
 | 14 | Thu 5 Nov | 2 | *No lecture* — both lecturers away | |
-| 15 | Mon 9 Nov | 3 | CMM · sonar, radar and lidar | Rossi |
+| 15 | Mon 9 Nov | 3 | 3D optical shape measurement | Rossi |
 | 16 | Thu 12 Nov | 2 | **Guest seminar** — Elica | guest |
-| 17 | Mon 16 Nov | 3 | *to be defined* | |
+| 17 | Mon 16 Nov | 3 | CMM · sonar, radar and lidar | Rossi |
 | 18 | Thu 19 Nov | 2 | *to be defined* | |
 | 19 | Mon 23 Nov | 3 | *to be defined* | |
 | 20 | Thu 26 Nov | 2 | *to be defined* | |
@@ -47,7 +47,7 @@ No prerequisites.
 
 ✅ delivered &nbsp;·&nbsp; 21 sessions (no lecture on 5 November), 53 hours against the 54 of the credit allocation.
 
-Sessions 17–22 will hold 3D optical shape measurement (moved from 5 November), image processing, two more guest seminars and practical sessions. They are filled in here as they are fixed.
+Sessions 18–22 will hold image processing, two more guest seminars and practical sessions. They are filled in here as they are fixed.
 
 ### Reserve dates
 
