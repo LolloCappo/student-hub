@@ -34,7 +34,7 @@ No prerequisites.
 | 10 | Thu 22 Oct | 2 | Light and illumination | Rossi |
 | 11 | Mon 26 Oct | 3 | **Guest seminar** — Maria Brizi, TUCEP | guest |
 | 12 | Thu 29 Oct | 2 | **Guest seminar** — Silvia Polidori, Metalcom | guest |
-| 13 | Mon 2 Nov | 3 | Interest points | Rossi |
+| 13 | Mon 2 Nov | 3 | Interest points | Capponi |
 | 14 | Thu 5 Nov | 2 | *No lecture* — both lecturers away | |
 | 15 | Mon 9 Nov | 3 | 3D optical shape measurement | Rossi |
 | 16 | Thu 12 Nov | 2 | **Guest seminar** — Elica | guest |
