@@ -35,7 +35,7 @@ No prerequisites.
 | 11 | Mon 26 Oct | 3 | **Guest seminar** — Maria Brizi, TUCEP | guest |
 | 12 | Thu 29 Oct | 2 | **Guest seminar** — Silvia Polidori, Metalcom | guest |
 | 13 | Mon 2 Nov | 3 | Interest points | Rossi |
-| 14 | Thu 5 Nov | 2 | 3D optical shape measurement | Capponi |
+| 14 | Thu 5 Nov | 2 | *No lecture* — both lecturers away | |
 | 15 | Mon 9 Nov | 3 | CMM · sonar, radar and lidar | Rossi |
 | 16 | Thu 12 Nov | 2 | **Guest seminar** — Elica | guest |
 | 17 | Mon 16 Nov | 3 | *to be defined* | |
@@ -45,9 +45,9 @@ No prerequisites.
 | 21 | Mon 30 Nov | 3 | *to be defined* | |
 | 22 | Thu 3 Dec | 2 | *to be defined* | |
 
-✅ delivered &nbsp;·&nbsp; 22 sessions, 55 hours against the 54 of the credit allocation.
+✅ delivered &nbsp;·&nbsp; 21 sessions (no lecture on 5 November), 53 hours against the 54 of the credit allocation.
 
-Sessions 17–22 will hold two more lectures, two more guest seminars and practical sessions. They are filled in here as they are fixed.
+Sessions 17–22 will hold 3D optical shape measurement (moved from 5 November), image processing, two more guest seminars and practical sessions. They are filled in here as they are fixed.
 
 ### Reserve dates
 
@@ -80,6 +80,12 @@ Slides are published here after each lecture.
 | 3 | [History and evolution of quality management](lectures/lec03-history.pdf) |
 | 4 | [What quality is, what it costs, how you organise for it](lectures/lec04-quality-and-costs.pdf) |
 | 5 | [ISO 9000 and ISO 9001](lectures/lec05-iso9000.pdf) |
+| 6 | [The seven statistical tools of quality](lectures/lec06-statistical-tools.pdf) |
+| 7 | [Analog image formation: light, lenses and the basics of photography](lectures/lec07-analog-image-formation.pdf) |
+| 8 | [Digital images: pixels, grey levels, colour and files](lectures/lec08-digital-images.pdf) |
+| 9 | [Camera sensors: from photons to grey levels](lectures/lec09-camera-sensors.pdf) |
+| 10 | [Light and illumination: making the defect visible](lectures/lec10-light-and-illumination.pdf) |
+| 11 | [Interest points: finding the same feature in two images](lectures/lec11-interest-points.pdf) |
 
 - **[Hands-on lab](https://lollocappo.github.io/student-hub/materials/quality-management/hands-on/)** — *can a phone camera inspect a batch of washers?* Three exercises that run in the browser, each with an optional Python notebook on Colab ([source](hands-on/))
 - [Notebooks from last year](hands-on/2025-26/): image manipulation, FFT, filtering and compression
